@@ -4,6 +4,37 @@ import Link from 'next/link'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
 
+// Иконки
+const ChartBarIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M3 13.125C3 12.504 3.504 12 4.125 12h2.25c.621 0 1.125.504 1.125 1.125v6.75C7.5 20.496 6.996 21 6.375 21h-2.25A1.125 1.125 0 013 19.875v-6.75zM9.75 8.625c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125v11.25c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V8.625zM16.5 4.125c0-.621.504-1.125 1.125-1.125h2.25C20.496 3 21 3.504 21 4.125v15.75c0 .621-.504 1.125-1.125 1.125h-2.25a1.125 1.125 0 01-1.125-1.125V4.125z" />
+  </svg>
+)
+
+const RocketIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+  </svg>
+)
+
+const TargetIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 17.25v1.007a3 3 0 01-.879 2.122L7.5 21h9l-.621-.621A3 3 0 0115 18.257V17.25m6-12V15a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 15V5.25m18 0A2.25 2.25 0 0018.75 3H5.25A2.25 2.25 0 003 5.25m18 0V12a2.25 2.25 0 01-2.25 2.25H5.25A2.25 2.25 0 013 12V5.25" />
+  </svg>
+)
+
+const GlobeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21c2.485 0 4.5-4.03 4.5-9S14.485 3 12 3m0 18c-2.485 0-4.5-4.03-4.5-9S9.515 3 12 3m0 0a8.997 8.997 0 017.843 4.582M12 3a8.997 8.997 0 00-7.843 4.582m15.686 0A11.953 11.953 0 0112 10.5c-2.998 0-5.74-1.1-7.843-2.918m15.686 0A8.959 8.959 0 0121 12c0 .778-.099 1.533-.284 2.253m0 0A17.919 17.919 0 0112 16.5c-3.162 0-6.133-.815-8.716-2.247m0 0A9.015 9.015 0 013 12c0-1.605.42-3.113 1.157-4.418" />
+  </svg>
+)
+
+const HandshakeIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
+  </svg>
+)
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
@@ -94,7 +125,7 @@ export default function Home() {
               className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
             >
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400 text-3xl">📈</span>
+                <span className="text-blue-400"><ChartBarIcon /></span>
                 <h3 className="text-2xl font-bold">Для инвесторов</h3>
               </div>
               <div>
@@ -125,7 +156,7 @@ export default function Home() {
               className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
             >
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400 text-3xl">🚀</span>
+                <span className="text-blue-400"><RocketIcon /></span>
                 <h3 className="text-2xl font-bold">Для стартапов</h3>
               </div>
               <div>
@@ -146,6 +177,64 @@ export default function Home() {
                 </ul>
               </div>
             </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Section */}
+      <section className="py-20 bg-gradient-to-br from-gray-900 to-gray-950">
+        <div className="container mx-auto px-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-center mb-12"
+          >
+            Сравнение инвестиционных подходов
+          </motion.h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full border-separate border-spacing-y-2">
+              <thead>
+                <tr className="bg-gray-800">
+                  <th className="py-3 px-4 text-left text-lg font-semibold rounded-l-xl">Кто</th>
+                  <th className="py-3 px-4 text-left text-lg font-semibold">Плюсы</th>
+                  <th className="py-3 px-4 text-left text-lg font-semibold rounded-r-xl">Минусы</th>
+                </tr>
+              </thead>
+              <tbody className="text-gray-200 text-base">
+                <tr className="bg-gray-850 hover:bg-gray-800 transition">
+                  <td className="py-4 px-4 font-semibold">Бизнес ангелы</td>
+                  <td className="py-4 px-4">Личное общение и менторство; Гибкие условия; Готовы инвестировать в высокорисковые, ранней стадии компании; Важные контакты; Нет обязательств по возврату капитала</td>
+                  <td className="py-4 px-4">Меньшие инвестиционные суммы; Потеря контроля; Возможные конфликты интересов; Менее формальные процессы; Более высокие ожидания</td>
+                </tr>
+                <tr className="bg-gray-850 hover:bg-gray-800 transition">
+                  <td className="py-4 px-4 font-semibold">Венчурные фонды</td>
+                  <td className="py-4 px-4">Значительный капитал; Экспертное знание и руководство; Сеть контактов и связей; Укрепление репутации</td>
+                  <td className="py-4 px-4">Более высокие ожидания; Потеря контроля; Сложные процессы; Нажим на достижение результатов</td>
+                </tr>
+                <tr className="bg-gray-850 hover:bg-gray-800 transition">
+                  <td className="py-4 px-4 font-semibold">Акселераторы</td>
+                  <td className="py-4 px-4">Структурная поддержка и менторство; Сообщество и сетевая поддержка; Больше видимость и распространение; Начальное финансирование</td>
+                  <td className="py-4 px-4">Затрата времени; Разбавление капитала; Ограниченный срок</td>
+                </tr>
+                <tr className="bg-gray-850 hover:bg-gray-800 transition">
+                  <td className="py-4 px-4 font-semibold">Корпорации/Банки</td>
+                  <td className="py-4 px-4">Стратегические партнерства; Вероятность и стабильность; Долгосрочная поддержка; Доступ к корпоративным сетям</td>
+                  <td className="py-4 px-4">Возможные несоответствия интересов; Бюрократические процессы; Меньше гибкости; Возможный приобретение</td>
+                </tr>
+                <tr className="bg-gray-850 hover:bg-gray-800 transition">
+                  <td className="py-4 px-4 font-semibold">Краудфандинг</td>
+                  <td className="py-4 px-4">Разнообразные источники финансирования; Формирование общества; Нет разбавления капитала (для определённых типов); Верификация; Маркетинговая поддержка и видимость</td>
+                  <td className="py-4 px-4">Затрата времени и усилий; Риск неудачи; Соблюдение регистрационных норм; Проблемы восприятия; Возможные мошеннические действия</td>
+                </tr>
+                <tr className="bg-green-900/80 hover:bg-green-800/90 transition font-bold rounded-xl shadow-lg">
+                  <td className="py-4 px-4 rounded-l-xl">Мы (Flow.Capital)</td>
+                  <td className="py-4 px-4">Экспертная поддержка и советы по подготовке к инвестициям; Эффективный процесс поиска и обеспечения инвестиций; Значительный допустимый объем инвестиций; Плата комиссии по завершению сделки с привлечённых средств</td>
+                  <td className="py-4 px-4 rounded-r-xl">Зависимость от качества и охвата сетевых контактов Flow; Возможные ограничения в прямом контакте с инвесторами</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
       </section>
@@ -228,7 +317,7 @@ export default function Home() {
               className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
             >
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400 text-3xl">🚀</span>
+                <span className="text-blue-400"><RocketIcon /></span>
                 <h3 className="text-2xl font-bold">Для стартапов</h3>
               </div>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
@@ -248,7 +337,7 @@ export default function Home() {
               className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
             >
               <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400 text-3xl">📈</span>
+                <span className="text-blue-400"><ChartBarIcon /></span>
                 <h3 className="text-2xl font-bold">Для инвесторов</h3>
               </div>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
@@ -280,22 +369,22 @@ export default function Home() {
               {
                 title: "Опыт",
                 description: "Более 10 лет в инвестиционной сфере",
-                icon: "📈"
+                icon: <ChartBarIcon />
               },
               {
                 title: "Экспертиза",
                 description: "Профессиональная команда аналитиков",
-                icon: "🎯"
+                icon: <TargetIcon />
               },
               {
                 title: "Сеть",
                 description: "Широкая сеть партнеров и инвесторов",
-                icon: "🌐"
+                icon: <GlobeIcon />
               },
               {
                 title: "Поддержка",
                 description: "Комплексная поддержка проектов",
-                icon: "🤝"
+                icon: <HandshakeIcon />
               }
             ].map((feature, index) => (
               <motion.div
@@ -306,7 +395,7 @@ export default function Home() {
                 viewport={{ once: true }}
                 className="bg-gray-800 p-6 rounded-lg text-center"
               >
-                <div className="text-4xl mb-4">{feature.icon}</div>
+                <div className="text-blue-400 mb-4 flex justify-center">{feature.icon}</div>
                 <h3 className="text-xl font-bold mb-2">{feature.title}</h3>
                 <p className="text-gray-300">{feature.description}</p>
               </motion.div>
