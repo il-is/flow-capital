@@ -3,14 +3,16 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
+import LoadingModal from '@/components/LoadingModal'
+import { useRouter } from 'next/navigation'
 
 const SECTION_TITLES = [
-  'Основная информация',
+  'Основная',
   'Команда',
   'Технологии',
-  'Продукт и рынок',
-  'Финансы и рост',
-  'Юридические аспекты и риски',
+  'Продукт',
+  'Финансы',
+  'Риски',
 ];
 
 const INFO_ICON = (
@@ -21,32 +23,118 @@ const INFO_ICON = (
   </svg>
 );
 
+type FormData = {
+  companyName: string;
+  industry: string;
+  contactName: string;
+  email: string;
+  phone: string;
+  description: string;
+  teamExperience: string;
+  teamMembers: string;
+  teamJointExp: string;
+  vision: string;
+  investorExp: string;
+  techNovelty: string;
+  rndInfra: string;
+  scalability: string;
+  productDescription: string;
+  productUnique: string;
+  marketSize: string;
+  competAdv: string;
+  traction: string;
+  investment: string;
+  investmentPlan: string;
+  scalingForecast: string;
+  currentInvestments: string;
+  capTable: string;
+  companyRegistration: string;
+  contracts: string;
+  noDisputes: string;
+  licenses: string;
+  ipClean: string;
+  risks: string;
+  financials: string;
+  competitors: string;
+}
+
 export default function StartupPage() {
+  const router = useRouter()
   const [step, setStep] = useState(1)
-  const { register, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch } = useForm()
+  const { register, handleSubmit, formState: { errors }, trigger, getValues, setValue, watch } = useForm<FormData>({
+    mode: 'onChange',
+    defaultValues: {
+      companyName: '',
+      industry: '',
+      contactName: '',
+      email: '',
+      phone: '',
+      description: '',
+      teamExperience: '',
+      teamMembers: '',
+      teamJointExp: '',
+      vision: '',
+      investorExp: '',
+      techNovelty: '',
+      rndInfra: '',
+      scalability: '',
+      productDescription: '',
+      productUnique: '',
+      marketSize: '',
+      competAdv: '',
+      traction: '',
+      investment: '',
+      investmentPlan: '',
+      scalingForecast: '',
+      currentInvestments: '',
+      capTable: '',
+      companyRegistration: '',
+      contracts: '',
+      noDisputes: '',
+      licenses: '',
+      ipClean: '',
+      risks: '',
+      financials: '',
+      competitors: ''
+    }
+  })
   const [pitchDeck, setPitchDeck] = useState<File | null>(null)
   const [docs, setDocs] = useState<File | null>(null)
   const [showInfo, setShowInfo] = useState<string | null>(null)
   const [focusedField, setFocusedField] = useState<string | null>(null)
   const [triedNext, setTriedNext] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
   const onSubmit = async (data: any) => {
     try {
-      data.submissionDate = new Date().toISOString();
-      const formData = new FormData();
-      Object.entries(data).forEach(([key, value]) => formData.append(key, value as string));
-      if (pitchDeck) formData.append('pitchDeck', pitchDeck);
-      if (docs) formData.append('docs', docs);
+      setIsSubmitting(true)
+      setSubmitStatus('loading')
+      
+      data.submissionDate = new Date().toISOString()
+      const formData = new FormData()
+      Object.entries(data).forEach(([key, value]) => formData.append(key, value as string))
+      if (pitchDeck) formData.append('pitchDeck', pitchDeck)
+      if (docs) formData.append('docs', docs)
+
       const response = await fetch('/api/startup', {
         method: 'POST',
         body: formData,
       })
+
       if (!response.ok) throw new Error('Failed to submit application')
-      alert('Заявка успешно отправлена! Мы свяжемся с вами в ближайшее время.')
-      setStep(1)
+
+      setSubmitStatus('success')
+      setTimeout(() => {
+        router.push('/success')
+      }, 3000)
     } catch (error) {
       console.error('Error submitting application:', error)
-      alert('Произошла ошибка при отправке заявки. Пожалуйста, попробуйте позже.')
+      setSubmitStatus('error')
+      setTimeout(() => {
+        setSubmitStatus('idle')
+        setIsSubmitting(false)
+      }, 3000)
     }
   }
 
@@ -58,31 +146,50 @@ export default function StartupPage() {
     }
     setTriedNext(false)
     setStep(target)
+
+    setTimeout(() => {
+      const firstInput = document.querySelector(`[data-step="${target}"] input, [data-step="${target}"] textarea`) as HTMLElement
+      if (firstInput) {
+        firstInput.scrollIntoView({ 
+          behavior: 'smooth',
+          block: 'center'
+        })
+        firstInput.focus()
+      }
+    }, 100)
   }
 
-  function getSectionFields(section: number) {
+  function getSectionFields(section: number): (keyof FormData)[] {
     switch (section) {
       case 1:
-        return ['companyName', 'industry', 'contactName', 'email', 'submissionDate', 'description']
+        return ['companyName', 'industry', 'contactName', 'email', 'phone', 'description']
       case 2:
-        return ['teamExperience', 'teamMembers', 'vision']
+        return ['teamExperience', 'teamMembers', 'teamJointExp', 'vision', 'investorExp']
       case 3:
-        return ['techNovelty', 'scalability']
+        return ['techNovelty', 'rndInfra', 'scalability']
       case 4:
-        return ['productDesc', 'productUnique', 'marketSize']
+        return ['productDescription', 'productUnique', 'marketSize', 'competAdv']
       case 5:
-        return ['traction', 'investment', 'investmentPlan', 'currentInvestments', 'capTable']
+        return ['traction', 'investment', 'investmentPlan', 'scalingForecast', 'currentInvestments', 'capTable']
       case 6:
-        return ['registration', 'noDisputes', 'ipClean', 'risks']
+        return ['companyRegistration', 'contracts', 'noDisputes', 'licenses', 'ipClean', 'risks', 'financials', 'competitors']
       default:
         return []
     }
   }
 
-  function CharLimit({ limit, field }: { limit: number, field: string }) {
-    return !focusedField || focusedField !== field ? (
-      <span className="text-xs text-gray-500 select-none">Максимум {limit} знаков</span>
-    ) : null
+  function CharLimit({ limit, field }: { limit: number, field: keyof FormData }) {
+    const value = watch(field)?.length || 0;
+    const remainingChars = limit - value;
+    const showWarning = remainingChars <= limit * 0.2; // Show when 20% or less remaining
+
+    if (!showWarning) return null;
+    
+    return (
+      <div className={`h-6 mt-1 text-sm ${remainingChars <= 0 ? 'text-red-500' : 'text-gray-500'}`}>
+        {value}/{limit} символов
+      </div>
+    );
   }
 
   function InfoTooltip({ section }: { section: number }) {
@@ -150,7 +257,13 @@ export default function StartupPage() {
             {sectionNav}
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-6" encType="multipart/form-data">
               {step === 1 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ duration: 0.5 }} 
+                  className="space-y-6"
+                  data-step="1"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Название стартапа</label>
                     <input type="text" {...register('companyName', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('companyName')} onBlur={() => setFocusedField(null)} />
@@ -199,7 +312,13 @@ export default function StartupPage() {
                 </motion.div>
               )}
               {step === 2 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ duration: 0.5 }} 
+                  className="space-y-6"
+                  data-step="2"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Опыт команды в отрасли</label>
                     <textarea {...register('teamExperience', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} onFocus={() => setFocusedField('teamExperience')} onBlur={() => setFocusedField(null)} />
@@ -208,7 +327,8 @@ export default function StartupPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Состав команды</label>
-                    <textarea {...register('teamMembers', { required: true })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('teamMembers')} onBlur={() => setFocusedField(null)} />
+                    <textarea {...register('teamMembers', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('teamMembers')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="teamMembers" />
                     {triedNext && errors.teamMembers && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
@@ -230,7 +350,13 @@ export default function StartupPage() {
                 </motion.div>
               )}
               {step === 3 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ duration: 0.5 }} 
+                  className="space-y-6"
+                  data-step="3"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Новизна технологии</label>
                     <textarea {...register('techNovelty', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} onFocus={() => setFocusedField('techNovelty')} onBlur={() => setFocusedField(null)} />
@@ -251,12 +377,35 @@ export default function StartupPage() {
                 </motion.div>
               )}
               {step === 4 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ duration: 0.5 }} 
+                  className="space-y-6"
+                  data-step="4"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Описание продукта и стадии</label>
-                    <textarea {...register('productDesc', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} onFocus={() => setFocusedField('productDesc')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={3000} field="productDesc" />
-                    {triedNext && errors.productDesc && <p className="mt-1 text-sm text-red-600">Это поле обязательно (до 300 слов)</p>}
+                    <div className="relative">
+                      <textarea
+                        {...register('productDescription', { 
+                          required: 'Это поле обязательно',
+                          maxLength: {
+                            value: 1000,
+                            message: 'Максимум 1000 символов'
+                          }
+                        })}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.productDescription ? 'border-red-500' : 'border-gray-300'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                        rows={6}
+                        placeholder="Опишите ваш продукт и на какой стадии разработки он находится"
+                      />
+                      <CharLimit limit={1000} field="productDescription" />
+                    </div>
+                    {errors.productDescription && (
+                      <p className="mt-1 text-sm text-red-500">{errors.productDescription.message as string}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Уникальность продукта</label>
@@ -283,12 +432,35 @@ export default function StartupPage() {
                 </motion.div>
               )}
               {step === 5 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ duration: 0.5 }} 
+                  className="space-y-6"
+                  data-step="5"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Текущие результаты (traction)</label>
-                    <textarea {...register('traction', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} onFocus={() => setFocusedField('traction')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={2000} field="traction" />
-                    {triedNext && errors.traction && <p className="mt-1 text-sm text-red-600">Это поле обязательно (до 200 слов)</p>}
+                    <div className="relative">
+                      <textarea
+                        {...register('traction', { 
+                          required: 'Это поле обязательно',
+                          maxLength: {
+                            value: 1000,
+                            message: 'Максимум 1000 символов'
+                          }
+                        })}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.traction ? 'border-red-500' : 'border-gray-300'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                        rows={6}
+                        placeholder="Опишите текущие результаты проекта"
+                      />
+                      <CharLimit limit={1000} field="traction" />
+                    </div>
+                    {errors.traction && (
+                      <p className="mt-1 text-sm text-red-500">{errors.traction.message as string}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Сумма инвестиций</label>
@@ -297,9 +469,26 @@ export default function StartupPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">План использования инвестиций</label>
-                    <textarea {...register('investmentPlan', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} onFocus={() => setFocusedField('investmentPlan')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={2000} field="investmentPlan" />
-                    {triedNext && errors.investmentPlan && <p className="mt-1 text-sm text-red-600">Это поле обязательно (до 200 слов)</p>}
+                    <div className="relative">
+                      <textarea
+                        {...register('investmentPlan', { 
+                          required: 'Это поле обязательно',
+                          maxLength: {
+                            value: 1000,
+                            message: 'Максимум 1000 символов'
+                          }
+                        })}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.investmentPlan ? 'border-red-500' : 'border-gray-300'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                        rows={6}
+                        placeholder="Опишите, как вы планируете использовать инвестиции"
+                      />
+                      <CharLimit limit={1000} field="investmentPlan" />
+                    </div>
+                    {errors.investmentPlan && (
+                      <p className="mt-1 text-sm text-red-500">{errors.investmentPlan.message as string}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Прогноз масштабирования</label>
@@ -321,12 +510,35 @@ export default function StartupPage() {
                 </motion.div>
               )}
               {step === 6 && (
-                <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.5 }} className="space-y-6">
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ duration: 0.5 }} 
+                  className="space-y-6"
+                  data-step="6"
+                >
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Регистрация компании</label>
-                    <textarea {...register('registration', { required: true, maxLength: 1000 })} rows={2} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={1000} onFocus={() => setFocusedField('registration')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={1000} field="registration" />
-                    {triedNext && errors.registration && <p className="mt-1 text-sm text-red-600">Это поле обязательно (до 100 слов)</p>}
+                    <div className="relative">
+                      <textarea
+                        {...register('companyRegistration', { 
+                          required: false,
+                          maxLength: {
+                            value: 1000,
+                            message: 'Максимум 1000 символов'
+                          }
+                        })}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.companyRegistration ? 'border-red-500' : 'border-gray-300'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                        rows={6}
+                        placeholder="Опишите статус регистрации компании"
+                      />
+                      <CharLimit limit={1000} field="companyRegistration" />
+                    </div>
+                    {errors.companyRegistration && (
+                      <p className="mt-1 text-sm text-red-500">{errors.companyRegistration.message as string}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Договорная база</label>
@@ -355,6 +567,52 @@ export default function StartupPage() {
                     <textarea {...register('risks', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} onFocus={() => setFocusedField('risks')} onBlur={() => setFocusedField(null)} />
                     <CharLimit limit={2000} field="risks" />
                     {triedNext && errors.risks && <p className="mt-1 text-sm text-red-600">Это поле обязательно (до 200 слов)</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Финансовые показатели</label>
+                    <div className="relative">
+                      <textarea
+                        {...register('financials', { 
+                          
+                          maxLength: {
+                            value: 1000,
+                            message: 'Максимум 1000 символов'
+                          }
+                        })}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.financials ? 'border-red-500' : 'border-gray-300'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                        rows={6}
+                        placeholder="Опишите финансовые показатели проекта"
+                      />
+                      <CharLimit limit={1000} field="financials" />
+                    </div>
+                    {errors.financials && (
+                      <p className="mt-1 text-sm text-red-500">{errors.financials.message as string}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Конкуренты</label>
+                    <div className="relative">
+                      <textarea
+                        {...register('competitors', { 
+                          
+                          maxLength: {
+                            value: 1000,
+                            message: 'Максимум 1000 символов'
+                          }
+                        })}
+                        className={`w-full px-4 py-3 rounded-lg border ${
+                          errors.competitors ? 'border-red-500' : 'border-gray-300'
+                        } focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200`}
+                        rows={6}
+                        placeholder="Опишите конкурентов и ваши конкурентные преимущества"
+                      />
+                      <CharLimit limit={1000} field="competitors" />
+                    </div>
+                    {errors.competitors && (
+                      <p className="mt-1 text-sm text-red-500">{errors.competitors.message as string}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Документы (PDF, до 10 МБ)</label>
@@ -391,6 +649,17 @@ export default function StartupPage() {
            </div>
         </div>
       </footer>
+
+      {/* Loading Modal */}
+      <LoadingModal 
+        isOpen={isSubmitting} 
+        message={
+          submitStatus === 'loading' ? 'Отправка заявки...' :
+          submitStatus === 'success' ? 'Заявка успешно отправлена!' :
+          submitStatus === 'error' ? 'Произошла ошибка при отправке заявки' :
+          'Отправка заявки...'
+        }
+      />
     </div>
   )
 } 

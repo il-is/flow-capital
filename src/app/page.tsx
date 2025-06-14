@@ -85,7 +85,7 @@ export default function Home() {
             <div>
               <h2 className="text-4xl font-bold mb-6">О компании</h2>
               <p className="text-lg text-gray-300 mb-6">
-              Flow.Capital — инвестиционная компания нового формата, соединяющая перспективные стартапы с инвесторами для создания прозрачных сделок и синергичного роста бизнеса.
+              Flow.Capital — венчурный фонд бутикового формата. Мы соединяем перспективные стартапы с инвесторами для создания прозрачных сделок и синергичного роста бизнеса.
               </p>
               <p className="text-lg text-gray-300">
                 Мы объединяем инновационные проекты с опытными инвесторами без сложных структур и заморозки капитала.
@@ -116,6 +116,43 @@ export default function Home() {
             Условия сотрудничества
           </motion.h2>
           <div className="grid md:grid-cols-2 gap-10">
+           {/* Для стартапов */}
+           <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-blue-400"><RocketIcon /></span>
+                <h3 className="text-2xl font-bold">Для стартапов</h3>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Кто нам подходит:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
+                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
+                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Наши условия:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Доступ к "умным деньгам": капитал + экспертиза, связи, менторство</li>
+                  <li>Гибкая структура сделки, учёт интересов фаундеров</li>
+                  <li>Возможность частичного cash-out на стадии роста</li>
+                  <li>Поддержка при масштабировании и выходе на международные рынки</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Преимущества:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Технический анализ и прогнозирование</li>
+                  <li>Гибкие форматы участия (SPV, договорная модель)</li>
+                </ul>
+              </div>
+            </motion.div>
             {/* Для инвесторов */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -146,37 +183,16 @@ export default function Home() {
                   <li>Возможность синергии с основным бизнесом</li>
                 </ul>
               </div>
+              <h4 className="font-semibold mb-2">Преимущества:</h4>
+              <ul className="list-disc list-inside text-gray-300 space-y-1">
+                <li>Доступ к "умным деньгам" — не только капитал, но и экспертиза, связи, менторство</li>
+                <li>Гибкая структура сделки, учёт интересов фаундеров</li>
+                <li>Возможность частичного cash-out на стадии роста</li>
+                <li>Поддержка при масштабировании и выходе на международные рынки</li>
+                <li>Прозрачность и юридическое сопровождение</li>
+              </ul>
             </motion.div>
-            {/* Для стартапов */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400"><RocketIcon /></span>
-                <h3 className="text-2xl font-bold">Для стартапов</h3>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Кто нам подходит:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
-                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
-                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Наши условия:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Доступ к "умным деньгам": капитал + экспертиза, связи, менторство</li>
-                  <li>Гибкая структура сделки, учёт интересов фаундеров</li>
-                  <li>Возможность частичного cash-out на стадии роста</li>
-                  <li>Поддержка при масштабировании и выходе на международные рынки</li>
-                </ul>
-              </div>
-            </motion.div>
+            
           </div>
         </div>
       </section>
