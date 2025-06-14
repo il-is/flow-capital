@@ -181,21 +181,32 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
 
 // Функция для отправки заявки инвестора
 export async function submitInvestorApplication(data: any) {
-  const spreadsheetId = process.env.INVESTOR_SHEET_ID
-  const range = 'Sheet1!A:Z'
-  
-  const values = [
-    new Date().toISOString(),
-    data.investorType,
-    data.industries?.join(', '),
-    data.experience,
-    data.investmentSize,
-    data.preferredStage,
-    data.investmentPeriod,
-    data.contactName,
-    data.email,
-    data.phone,
-  ]
+  const formData = {
+    submissionDate: new Date().toISOString(),
+    investorType: data.investorType,
+    industries: data.industries?.join(', '),
+    experience: data.experience,
+    investmentSize: data.investmentSize,
+    preferredStage: data.preferredStage,
+    investmentPeriod: data.investmentPeriod,
+    contactName: data.contactName,
+    email: data.email,
+    phone: data.phone,
+  };
 
-  return appendToSheet(spreadsheetId!, range, values)
+  const response = await fetch(GOOGLE_SCRIPT_URL!, {
+    method: 'POST',
+    body: JSON.stringify(formData),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const responseData = await response.json();
+
+  if (!response.ok) {
+    throw new Error(`Failed to submit to Google Sheets: ${JSON.stringify(responseData)}`);
+  }
+
+  return { success: true, responseData };
 } 
