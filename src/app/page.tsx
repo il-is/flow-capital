@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { motion } from 'framer-motion'
 import Image from 'next/image'
+import { useState } from 'react';
 
 // Иконки
 const ChartBarIcon = () => (
@@ -34,6 +35,210 @@ const HandshakeIcon = () => (
     <path strokeLinecap="round" strokeLinejoin="round" d="M15.59 14.37a6 6 0 01-5.84 7.38v-4.8m5.84-2.58a14.98 14.98 0 006.16-12.12A14.98 14.98 0 009.631 8.41m5.96 5.96a14.926 14.926 0 01-5.841 2.58m-.119-8.54a6 6 0 00-7.381 5.84h4.8m2.581-5.84a14.927 14.927 0 00-2.58 5.84m2.699 2.7c-.103.021-.207.041-.311.06a15.09 15.09 0 01-2.448-2.448 14.9 14.9 0 01.06-.312m-2.24 2.39a4.493 4.493 0 00-1.757 4.306 4.493 4.493 0 004.306-1.758M16.5 9a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" />
   </svg>
 )
+
+const comparisonData = [
+  {
+    title: 'Flow.Capital',
+    plus: [
+      'Экспертная поддержка и советы по подготовке к инвестициям',
+      'Эффективный процесс поиска и обеспечения инвестиций',
+      'Значительный допустимый объем инвестиций',
+      'Плата комиссии по завершению сделки с привлечённых средств',
+    ],
+    minus: [
+      'Зависимость от качества и охвата сетевых контактов Flow',
+      'Возможные ограничения в прямом контакте с инвесторами',
+    ],
+  },
+  {
+    title: 'Бизнес ангелы',
+    plus: [
+      'Личное общение и менторство',
+      'Гибкие условия',
+      'Готовы инвестировать в высокорисковые, ранней стадии компании',
+      'Важные контакты',
+      'Нет обязательств по возврату капитала',
+    ],
+    minus: [
+      'Меньшие инвестиционные суммы',
+      'Потеря контроля',
+      'Возможные конфликты интересов',
+      'Менее формальные процессы',
+      'Более высокие ожидания',
+    ],
+  },
+  {
+    title: 'Венчурные фонды',
+    plus: [
+      'Значительный капитал',
+      'Экспертное знание и руководство',
+      'Сеть контактов и связей',
+      'Укрепление репутации',
+    ],
+    minus: [
+      'Более высокие ожидания',
+      'Потеря контроля',
+      'Сложные процессы',
+      'Нажим на достижение результатов',
+    ],
+  },
+  {
+    title: 'Акселераторы',
+    plus: [
+      'Структурная поддержка и менторство',
+      'Сообщество и сетевая поддержка',
+      'Больше видимость и распространение',
+      'Начальное финансирование',
+    ],
+    minus: [
+      'Затрата времени',
+      'Разбавление капитала',
+      'Ограниченный срок',
+    ],
+  },
+  {
+    title: 'Корпорации/Банки',
+    plus: [
+      'Стратегические партнерства',
+      'Вероятность и стабильность',
+      'Долгосрочная поддержка',
+      'Доступ к корпоративным сетям',
+    ],
+    minus: [
+      'Возможные несоответствия интересов',
+      'Бюрократические процессы',
+      'Меньше гибкости',
+      'Возможное приобретение',
+    ],
+  },
+  {
+    title: 'Краудфандинг',
+    plus: [
+      'Разнообразные источники финансирования',
+      'Формирование общества',
+      'Нет разбавления капитала (для определённых типов)',
+      'Верификация',
+      'Маркетинговая поддержка и видимость',
+    ],
+    minus: [
+      'Затрата времени и усилий',
+      'Риск неудачи',
+      'Соблюдение регистрационных норм',
+      'Проблемы восприятия',
+      'Возможные мошеннические действия',
+    ],
+  },
+];
+
+function ComparisonTable() {
+  const [expanded, setExpanded] = useState<number | null>(null);
+  const [showAll, setShowAll] = useState<{ [key: number]: boolean }>({});
+
+  // Мобильные карточки-аккордеоны
+  return (
+    <>
+      {/* Desktop table */}
+      <div className="hidden md:block">
+        <table className="min-w-full border-separate border-spacing-y-2">
+          <thead>
+            <tr className="bg-gray-800">
+              <th className="py-3 px-4 text-left text-lg font-semibold rounded-l-xl">Кто</th>
+              <th className="py-3 px-4 text-left text-lg font-semibold">Плюсы</th>
+              <th className="py-3 px-4 text-left text-lg font-semibold rounded-r-xl">Минусы</th>
+            </tr>
+          </thead>
+          <tbody className="text-gray-200 text-base">
+            {comparisonData.map((row, idx) => (
+              <tr key={row.title} className={idx % 2 === 0 ? 'bg-gray-900' : 'bg-gray-950'}>
+                <td className="py-4 px-4 font-semibold align-top min-w-[140px]">{row.title}</td>
+                <td className="py-4 px-4 align-top">
+                  <ul className="list-disc list-inside space-y-1">
+                    {(showAll[idx] ? row.plus : row.plus.slice(0, 3)).map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                  {row.plus.length > 3 && (
+                    <button
+                      className="mt-2 text-blue-400 hover:underline text-sm"
+                      onClick={() => setShowAll(s => ({ ...s, [idx]: !s[idx] }))}
+                    >
+                      {showAll[idx] ? 'Скрыть' : 'Показать больше'}
+                    </button>
+                  )}
+                </td>
+                <td className="py-4 px-4 align-top">
+                  <ul className="list-disc list-inside space-y-1">
+                    {(showAll[idx] ? row.minus : row.minus.slice(0, 3)).map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                  {row.minus.length > 3 && (
+                    <button
+                      className="mt-2 text-blue-400 hover:underline text-sm"
+                      onClick={() => setShowAll(s => ({ ...s, [idx]: !s[idx] }))}
+                    >
+                      {showAll[idx] ? 'Скрыть' : 'Показать больше'}
+                    </button>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      {/* Mobile cards/accordion */}
+      <div className="md:hidden space-y-4">
+        {comparisonData.map((row, idx) => (
+          <div key={row.title} className="bg-gray-900 rounded-xl shadow p-4">
+            <button
+              className="w-full flex justify-between items-center text-left font-semibold text-lg text-white"
+              onClick={() => setExpanded(expanded === idx ? null : idx)}
+            >
+              {row.title}
+              <span className="ml-2 text-blue-400">{expanded === idx ? '▲' : '▼'}</span>
+            </button>
+            {expanded === idx && (
+              <div className="mt-3">
+                <div className="mb-2">
+                  <span className="font-bold text-green-400">Плюсы:</span>
+                  <ul className="list-disc list-inside space-y-1 ml-4 mt-1">
+                    {(showAll[idx] ? row.plus : row.plus.slice(0, 3)).map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                  {row.plus.length > 3 && (
+                    <button
+                      className="mt-2 text-blue-400 hover:underline text-sm"
+                      onClick={() => setShowAll(s => ({ ...s, [idx]: !s[idx] }))}
+                    >
+                      {showAll[idx] ? 'Скрыть' : 'Показать больше'}
+                    </button>
+                  )}
+                </div>
+                <div>
+                  <span className="font-bold text-red-400">Минусы:</span>
+                  <ul className="list-disc list-inside space-y-1 ml-4 mt-1">
+                    {(showAll[idx] ? row.minus : row.minus.slice(0, 3)).map((item, i) => (
+                      <li key={i}>{item}</li>
+                    ))}
+                  </ul>
+                  {row.minus.length > 3 && (
+                    <button
+                      className="mt-2 text-blue-400 hover:underline text-sm"
+                      onClick={() => setShowAll(s => ({ ...s, [idx]: !s[idx] }))}
+                    >
+                      {showAll[idx] ? 'Скрыть' : 'Показать больше'}
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </>
+  );
+}
 
 export default function Home() {
   return (
@@ -85,10 +290,11 @@ export default function Home() {
             <div>
               <h2 className="text-4xl font-bold mb-6">О компании</h2>
               <p className="text-lg text-gray-300 mb-6">
-              Flow.Capital — венчурный фонд бутикового формата. Мы соединяем перспективные стартапы с инвесторами для создания прозрачных сделок и синергичного роста бизнеса.
+              Flow.Capital — венчурный фонд бутикового формата. Мы отбираем проекты с потенциалом кратного роста, выстраиваем понятные сделки и сопровождаем весь процесс до выхода.
               </p>
-              <p className="text-lg text-gray-300">
-                Мы объединяем инновационные проекты с опытными инвесторами без сложных структур и заморозки капитала.
+              <h2 className="text-4xl font-bold mb-6">Миссия</h2>
+              <p className="text-lg text-gray-300 mb-6">
+                Сделать венчурный рынок в России доступным, понятным и живым: чтобы у сильных команд был шанс на рост, а у инвесторов — на прозрачные и гибкие сделки.
               </p>
             </div>
             <div className="relative h-[400px] rounded-lg overflow-hidden">
@@ -98,6 +304,7 @@ export default function Home() {
                 fill
                 className="object-cover"
               />
+              
             </div>
           </motion.div>
         </div>
@@ -113,7 +320,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-4xl font-bold text-center mb-16"
           >
-            Условия сотрудничества
+            Преимущества и условия
           </motion.h2>
           <div className="grid md:grid-cols-2 gap-10">
            {/* Для стартапов */}
@@ -129,27 +336,19 @@ export default function Home() {
                 <h3 className="text-2xl font-bold">Для стартапов</h3>
               </div>
               <div>
-                <h4 className="font-semibold mb-2">Кто нам подходит:</h4>
+                <h4 className="font-semibold mb-2">Преимущества:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Доступ к умным деньгам: капитал, экспертиза, поддержка</li>
+                  <li>Гибкая структура сделки, учёт интересов фаундеров</li>
+                  <li>Различные форматы сделок: cash-in, cash-out, exit</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Условия:</h4>
                 <ul className="list-disc list-inside text-gray-300 space-y-1">
                   <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
                   <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
                   <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Наши условия:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Доступ к "умным деньгам": капитал + экспертиза, связи, менторство</li>
-                  <li>Гибкая структура сделки, учёт интересов фаундеров</li>
-                  <li>Возможность частичного cash-out на стадии роста</li>
-                  <li>Поддержка при масштабировании и выходе на международные рынки</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Преимущества:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Технический анализ и прогнозирование</li>
-                  <li>Гибкие форматы участия (SPV, договорная модель)</li>
                 </ul>
               </div>
             </motion.div>
@@ -166,31 +365,20 @@ export default function Home() {
                 <h3 className="text-2xl font-bold">Для инвесторов</h3>
               </div>
               <div>
-                <h4 className="font-semibold mb-2">Кто нам подходит:</h4>
+                <h4 className="font-semibold mb-2">Преимущества:</h4>
                 <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Владельцы бизнеса, семейные офисы, HNWI</li>
-                  <li>Топ-менеджеры и предприниматели, желающие диверсифицировать активы</li>
-                  <li>Корпоративные и международные инвесторы</li>
+                    <li>Прозрачность и юридическое сопровождение</li>
+                    <li>Гибкие форматы участия (SPV, договорная модель)</li>
+                    <li>Доступ к отобранным сделкам с высоким потенциалом роста</li>
+                    <li>Возможность синергии с основным бизнесом</li>
                 </ul>
               </div>
               <div>
-                <h4 className="font-semibold mb-2">Наши условия:</h4>
+                <h4 className="font-semibold mb-2">Условия:</h4>
                 <ul className="list-disc list-inside text-gray-300 space-y-1">
                   <li>Порог входа — от 10 млн ₽</li>
-                  <li>Гибкие форматы участия (SPV, договорная модель)</li>
-                  <li>Доступ к отобранным сделкам с высоким потенциалом роста</li>
-                  <li>Юридическая прозрачность и сопровождение</li>
-                  <li>Возможность синергии с основным бизнесом</li>
                 </ul>
               </div>
-              <h4 className="font-semibold mb-2">Преимущества:</h4>
-              <ul className="list-disc list-inside text-gray-300 space-y-1">
-                <li>Доступ к "умным деньгам" — не только капитал, но и экспертиза, связи, менторство</li>
-                <li>Гибкая структура сделки, учёт интересов фаундеров</li>
-                <li>Возможность частичного cash-out на стадии роста</li>
-                <li>Поддержка при масштабировании и выходе на международные рынки</li>
-                <li>Прозрачность и юридическое сопровождение</li>
-              </ul>
             </motion.div>
             
           </div>
@@ -209,49 +397,7 @@ export default function Home() {
           >
             Сравнение инвестиционных подходов
           </motion.h2>
-          <div className="overflow-x-auto">
-            <table className="min-w-full border-separate border-spacing-y-2">
-              <thead>
-                <tr className="bg-gray-800">
-                  <th className="py-3 px-4 text-left text-lg font-semibold rounded-l-xl">Кто</th>
-                  <th className="py-3 px-4 text-left text-lg font-semibold">Плюсы</th>
-                  <th className="py-3 px-4 text-left text-lg font-semibold rounded-r-xl">Минусы</th>
-                </tr>
-              </thead>
-              <tbody className="text-gray-200 text-base">
-                <tr className="bg-gray-850 hover:bg-gray-800 transition">
-                  <td className="py-4 px-4 font-semibold">Бизнес ангелы</td>
-                  <td className="py-4 px-4">Личное общение и менторство; Гибкие условия; Готовы инвестировать в высокорисковые, ранней стадии компании; Важные контакты; Нет обязательств по возврату капитала</td>
-                  <td className="py-4 px-4">Меньшие инвестиционные суммы; Потеря контроля; Возможные конфликты интересов; Менее формальные процессы; Более высокие ожидания</td>
-                </tr>
-                <tr className="bg-gray-850 hover:bg-gray-800 transition">
-                  <td className="py-4 px-4 font-semibold">Венчурные фонды</td>
-                  <td className="py-4 px-4">Значительный капитал; Экспертное знание и руководство; Сеть контактов и связей; Укрепление репутации</td>
-                  <td className="py-4 px-4">Более высокие ожидания; Потеря контроля; Сложные процессы; Нажим на достижение результатов</td>
-                </tr>
-                <tr className="bg-gray-850 hover:bg-gray-800 transition">
-                  <td className="py-4 px-4 font-semibold">Акселераторы</td>
-                  <td className="py-4 px-4">Структурная поддержка и менторство; Сообщество и сетевая поддержка; Больше видимость и распространение; Начальное финансирование</td>
-                  <td className="py-4 px-4">Затрата времени; Разбавление капитала; Ограниченный срок</td>
-                </tr>
-                <tr className="bg-gray-850 hover:bg-gray-800 transition">
-                  <td className="py-4 px-4 font-semibold">Корпорации/Банки</td>
-                  <td className="py-4 px-4">Стратегические партнерства; Вероятность и стабильность; Долгосрочная поддержка; Доступ к корпоративным сетям</td>
-                  <td className="py-4 px-4">Возможные несоответствия интересов; Бюрократические процессы; Меньше гибкости; Возможный приобретение</td>
-                </tr>
-                <tr className="bg-gray-850 hover:bg-gray-800 transition">
-                  <td className="py-4 px-4 font-semibold">Краудфандинг</td>
-                  <td className="py-4 px-4">Разнообразные источники финансирования; Формирование общества; Нет разбавления капитала (для определённых типов); Верификация; Маркетинговая поддержка и видимость</td>
-                  <td className="py-4 px-4">Затрата времени и усилий; Риск неудачи; Соблюдение регистрационных норм; Проблемы восприятия; Возможные мошеннические действия</td>
-                </tr>
-                <tr className="bg-green-900/80 hover:bg-green-800/90 transition font-bold rounded-xl shadow-lg">
-                  <td className="py-4 px-4 rounded-l-xl">Мы (Flow.Capital)</td>
-                  <td className="py-4 px-4">Экспертная поддержка и советы по подготовке к инвестициям; Эффективный процесс поиска и обеспечения инвестиций; Значительный допустимый объем инвестиций; Плата комиссии по завершению сделки с привлечённых средств</td>
-                  <td className="py-4 px-4 rounded-r-xl">Зависимость от качества и охвата сетевых контактов Flow; Возможные ограничения в прямом контакте с инвесторами</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <ComparisonTable />
         </div>
       </section>
 

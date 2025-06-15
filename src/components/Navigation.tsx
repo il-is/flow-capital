@@ -4,24 +4,36 @@ import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 
 const navLinks = [
   { label: 'Главная', to: 'top' },
   { label: 'О компании', to: 'about' },
-  { label: 'Условия сотрудничества', to: 'terms' },
-  { label: 'Наши услуги', to: 'services' },
-  { label: 'Преимущества', to: 'benefits' },
+  { label: 'Преимущества', to: 'terms' },
+  { label: 'Услуги', to: 'services' },
 ];
 
 export default function Navigation() {
   const [isOpen, setIsOpen] = useState(false);
   const pathname = usePathname();
   const isHome = pathname === '/';
+  const router = useRouter();
 
   // Плавный скролл к секции
   const handleScroll = (id: string) => {
     setIsOpen(false);
+    if (!isHome) {
+      // Сначала переходим на главную страницу
+      router.push('/');
+      // После перехода ждем загрузки страницы и скроллим к секции
+      setTimeout(() => {
+        const el = document.getElementById(id);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      return;
+    }
     if (id === 'top') {
       window.scrollTo({ top: 0, behavior: 'smooth' });
       return;
@@ -29,6 +41,27 @@ export default function Navigation() {
     const el = document.getElementById(id);
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  // Обработчик клика по кнопке "Оставить заявку"
+  const handleApplyClick = () => {
+    setIsOpen(false);
+    if (!isHome) {
+      // Сначала переходим на главную страницу
+      router.push('/');
+      // После перехода ждем загрузки страницы и скроллим к секции CTA
+      setTimeout(() => {
+        const ctaSection = document.getElementById('cta');
+        if (ctaSection) {
+          ctaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+      return;
+    }
+    const ctaSection = document.getElementById('cta');
+    if (ctaSection) {
+      ctaSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
   };
 
@@ -43,6 +76,21 @@ export default function Navigation() {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
+
+  // Обработка хэша в URL при загрузке страницы
+  useEffect(() => {
+    if (isHome) {
+      const hash = window.location.hash.slice(1);
+      if (hash) {
+        const el = document.getElementById(hash);
+        if (el) {
+          setTimeout(() => {
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }, 100);
+        }
+      }
+    }
+  }, [isHome]);
 
   return (
     <>
@@ -60,26 +108,26 @@ export default function Navigation() {
             Flow.Capital
           </Link>
           {/* Desktop nav */}
-          <div className="hidden md:flex gap-8 items-center">
+          <div className="hidden lg:flex gap-6 items-center">
             {navLinks.map(link => (
               <button
                 key={link.to}
                 onClick={() => handleScroll(link.to)}
-                className="text-white hover:text-blue-400 transition-colors px-2 py-1 rounded focus:outline-none"
+                className="text-white hover:text-blue-400 transition-colors px-1 py-1 rounded focus:outline-none whitespace-nowrap"
               >
                 {link.label}
               </button>
             ))}
-            <Link
-              href="/startups"
-              className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition-colors shadow focus:outline-none"
+            <button
+              onClick={handleApplyClick}
+              className="ml-4 bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-semibold transition-colors shadow focus:outline-none flex-shrink-0 whitespace-nowrap"
             >
               Оставить заявку
-            </Link>
+            </button>
           </div>
           {/* Hamburger */}
           <button
-            className="md:hidden text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="lg:hidden text-white p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             onClick={() => setIsOpen(true)}
             aria-label="Открыть меню"
           >
@@ -138,12 +186,12 @@ export default function Navigation() {
                     {link.label}
                   </button>
                 ))}
-                <Link
-                  href="/startups"
+                <button
+                  onClick={handleApplyClick}
                   className="mt-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-semibold transition-colors shadow"
                 >
                   Оставить заявку
-                </Link>
+                </button>
               </div>
             </motion.div>
           </motion.div>

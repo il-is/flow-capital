@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import LoadingModal from '@/components/LoadingModal'
@@ -106,6 +106,23 @@ export default function StartupPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle')
 
+  const sectionNavRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Автопрокрутка к активному шагу
+    const activeBtn = sectionNavRef.current?.querySelector('.section-step-active');
+    if (activeBtn && sectionNavRef.current) {
+      const parent = sectionNavRef.current;
+      const btnRect = (activeBtn as HTMLElement).getBoundingClientRect();
+      const parentRect = parent.getBoundingClientRect();
+      // Скроллим так, чтобы активный шаг был по центру
+      parent.scrollTo({
+        left: (activeBtn as HTMLElement).offsetLeft - parentRect.width / 2 + btnRect.width / 2,
+        behavior: 'smooth',
+      });
+    }
+  }, [step]);
+
   const onSubmit = async (data: any) => {
     try {
       setIsSubmitting(true)
@@ -207,12 +224,18 @@ export default function StartupPage() {
 
   const sectionNav = (
     <div className="mb-8">
-      <div className="flex justify-center gap-6 mb-2">
+      <div
+        ref={sectionNavRef}
+        className="flex gap-6 mb-2 overflow-x-auto scrollbar-hide px-2 -mx-2 flex-nowrap"
+        style={{ WebkitOverflowScrolling: 'touch' }}
+      >
         {[1,2,3,4,5,6].map((i) => (
-          <div key={i} className="flex flex-col items-center">
+          <div key={i} className="flex flex-col items-center min-w-[80px]">
             <button
               onClick={() => goToStep(i)}
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-lg font-bold border-2 transition-colors mb-1 ${step === i ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-blue-50'}`}
+              className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-2 transition-colors mb-1
+                ${step === i ? 'bg-blue-600 text-white border-blue-600 section-step-active' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-blue-50'}`}
+              style={{ minWidth: 48 }}
             >
               {i}
             </button>
@@ -221,7 +244,9 @@ export default function StartupPage() {
             </div>
           </div>
         ))}
-        <span className="ml-3 align-middle self-start"><InfoTooltip section={step} /></span>
+      </div>
+      <div className="text-center text-sm text-gray-500 mb-2">
+        Заполните информацию для перехода к следующей секции. Если вопрос нерелевантен вашей компании, то поставьте "-".
       </div>
     </div>
   )
