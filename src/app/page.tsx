@@ -265,14 +265,7 @@ function SimpleLeadForm() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
       });
-      let data;
-      try {
-        data = await res.json();
-      } catch {
-        setError('Ошибка: сервер вернул некорректный ответ. Попробуйте позже или обратитесь к поддержке.');
-        setLoading(false);
-        return;
-      }
+      const data = await res.json();
       if (data.success) {
         setSubmitted(true);
       } else {
@@ -799,7 +792,7 @@ export default function Home() {
               <div>Москва, Пресненская наб., 12 </div>
             </div>
             <div className="flex-1 text-center">
-              <div className="mb-2 font-semibold text-white">Соцсети</div>
+              <div className="mb-2 font-semibold text-white">Telegram</div>
               <div className="flex justify-center gap-3 mt-1">
               <a href="https://t.me/ilya_isachenkov" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400" aria-label="Telegram">
                 <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M9.036 15.684l-.396 4.09c.568 0 .814-.244 1.112-.537l2.664-2.53 5.522 4.04c1.012.557 1.73.264 1.98-.937l3.59-16.84c.327-1.513-.547-2.104-1.523-1.75L1.36 9.36c-1.48.57-1.46 1.38-.253 1.75l4.31 1.347 10.01-6.31c.47-.29.9-.13.55.18"/></svg>
