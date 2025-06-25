@@ -52,11 +52,13 @@ type FormData = {
   companyRegistration: string;
   contracts: string;
   noDisputes: string;
+  unitEconomics: string;
   licenses: string;
   ipClean: string;
   risks: string;
   financials: string;
   competitors: string;
+  uniqueSellingPoint: string;
 }
 
 export default function StartupPage() {
@@ -241,67 +243,31 @@ export default function StartupPage() {
     }).length;
   };
 
-  const scrollNav = (dir: 'left' | 'right') => {
-    if (sectionNavRef.current) {
-      const scrollAmount = 120; // px
-      sectionNavRef.current.scrollBy({
-        left: dir === 'left' ? -scrollAmount : scrollAmount,
-        behavior: 'smooth',
-      });
-    }
-  };
-
-  const getProgressColor = (progress: number) => {
-    if (progress === 0) return 'bg-gray-200 text-gray-500 border-gray-200';
-    if (progress < 50) return 'bg-yellow-100 text-yellow-700 border-yellow-300';
-    if (progress < 100) return 'bg-blue-100 text-blue-700 border-blue-400';
-    return 'bg-green-500 text-white border-green-600';
-  };
-
-  const getProgressBarColor = (progress: number) => {
-    if (progress === 0) return 'bg-gray-200';
-    if (progress < 50) return 'bg-yellow-400';
-    if (progress < 100) return 'bg-blue-500';
-    return 'bg-green-500';
-  };
-
   const sectionNav = (
-    <div className="mb-8 relative">
-      <button
-        type="button"
-        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-gray-300 rounded-full p-2 shadow hover:bg-gray-100 transition disabled:opacity-30"
-        onClick={() => scrollNav('left')}
-        aria-label="Листать влево"
-        style={{ display: 'block' }}
-      >
-        <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M13 15l-5-5 5-5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </button>
-      <div
-        ref={sectionNavRef}
-        className="flex gap-6 mb-2 px-2 flex-nowrap overflow-x-auto scrollbar-hide"
-        style={{ WebkitOverflowScrolling: 'touch' }}
-      >
+    <div className="mb-8">
+      <div className="flex gap-6 mb-2 px-2 -mx-2 flex-wrap justify-center">
         {[1,2,3,4,5,6,7].map((i) => {
           const filledCount = getFilledFieldsCount(i);
           const requiredCount = getRequiredFieldsCount(i);
           const progress = requiredCount > 0 ? Math.round((filledCount / requiredCount) * 100) : 0;
-          const colorClass = step === i
-            ? 'bg-blue-600 text-white border-blue-600'
-            : getProgressColor(progress);
+          
           return (
             <div key={i} className="flex flex-col items-center min-w-[80px]">
               <button
                 onClick={() => goToStep(i)}
-                className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-2 transition-colors mb-1 relative ${colorClass}`}
+                className={`w-12 h-12 rounded-full flex items-center justify-center text-lg font-bold border-2 transition-colors mb-1 relative
+                  ${step === i ? 'bg-blue-600 text-white border-blue-600' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-blue-50'}`}
                 style={{ minWidth: 48 }}
               >
                 {i}
-                <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-200 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full transition-all duration-300 ${getProgressBarColor(progress)}`}
-                    style={{ width: `${progress}%` }}
-                  />
-                </div>
+                {progress > 0 && (
+                  <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-8 h-1 bg-gray-200 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-green-500 transition-all duration-300"
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
+                )}
               </button>
               <div className={`text-xs md:text-sm text-center mt-1 font-semibold ${step === i ? 'text-blue-700' : 'text-gray-500'}`} style={{maxWidth: 110}}>
                 {SECTION_TITLES[i-1]}
@@ -315,16 +281,7 @@ export default function StartupPage() {
           );
         })}
       </div>
-      <button
-        type="button"
-        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white border border-gray-300 rounded-full p-2 shadow hover:bg-gray-100 transition disabled:opacity-30"
-        onClick={() => scrollNav('right')}
-        aria-label="Листать вправо"
-        style={{ display: 'block' }}
-      >
-        <svg width="20" height="20" fill="none" viewBox="0 0 20 20"><path d="M7 5l5 5-5 5" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-      </button>
-      <div className="text-center text-sm text-gray-500 mb-2 mt-2">
+      <div className="text-center text-sm text-gray-500 mb-2">
         Заполните информацию для перехода к следующей секции. Если вопрос нерелевантен вашему проекту или ответа нет на данном этапе, то поставьте "-".
       </div>
     </div>
@@ -483,13 +440,13 @@ export default function StartupPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Конкуренция</label>
-                    <textarea {...register('competAdv', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Приведите резултаты оценки уровня конкуренции в рынке" />
-                    <CharLimit limit={2000} field="competAdv" />
+                    <textarea {...register('competitors', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Приведите резултаты оценки уровня конкуренции в рынке" />
+                    <CharLimit limit={2000} field="competitors" />
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Уникальное торговое предложение</label>
-                    <textarea {...register('competAdv', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите ваше уникальное торговое предложение" />
-                    <CharLimit limit={2000} field="competAdv" />
+                    <textarea {...register('uniqueSellingPoint', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите ваше уникальное торговое предложение" />
+                    <CharLimit limit={2000} field="uniqueSellingPoint" />
                   </div>
                 </motion.div>
               )}
@@ -531,14 +488,14 @@ export default function StartupPage() {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Масштабируемость проекта (географическая)</label>
-                    <textarea {...register('capTable', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Какой потенциал географического роста" />
-                    <CharLimit limit={2000} field="capTable" />
+                    <textarea {...register('scalability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Какой потенциал географического роста" />
+                    <CharLimit limit={2000} field="scalability" />
                     {triedNext && errors.capTable && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Unit-экономика</label>
-                    <textarea {...register('capTable', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите и предоставьте расчеты по ключевым метрикам вашего проекта" />
-                    <CharLimit limit={2000} field="capTable" />
+                    <textarea {...register('unitEconomics', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите и предоставьте расчеты по ключевым метрикам вашего проекта" />
+                    <CharLimit limit={2000} field="unitEconomics" />
                     {triedNext && errors.capTable && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                 </motion.div>

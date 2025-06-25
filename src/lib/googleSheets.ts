@@ -79,6 +79,7 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
   try {
     console.log('Starting submission process...')
     console.log('GOOGLE_SCRIPT_URL:', GOOGLE_SCRIPT_URL)
+    console.log('Google Apps Script rawText:', rawText);
 
     const submissionId = Date.now().toString()
     console.log('Generated submissionId:', submissionId)
@@ -160,9 +161,14 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
     })
 
     console.log('Google Apps Script response status:', response.status)
-    const responseData = await response.json()
+    const rawText = await response.text()
+    let responseData
+    try {
+      responseData = JSON.parse(rawText)
+    } catch (e) {
+      throw new Error('Google Script вернул некорректный ответ: ' + rawText.slice(0, 100))
+    }
     console.log('Google Apps Script response:', responseData)
-
     if (!response.ok) {
       throw new Error(`Failed to submit to Google Sheets: ${JSON.stringify(responseData)}`)
     }
@@ -209,4 +215,29 @@ export async function submitInvestorApplication(data: any) {
   }
 
   return { success: true, responseData };
+}
+
+export async function submitLeadToGoogleSheet(data: { name: string; email: string; phone: string; comment: string }) {
+  const response = await fetch(GOOGLE_SCRIPT_URL!, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      submissionDate: new Date().toISOString(),
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      comment: data.comment,
+    }),
+  });
+  const rawText = await response.text();
+  let responseData;
+  try {
+    responseData = JSON.parse(rawText);
+  } catch (e) {
+    throw new Error('Google Script вернул некорректный ответ: ' + rawText.slice(0, 100));
+  }
+  if (!response.ok || !responseData.success) {
+    throw new Error(responseData.error || 'Ошибка при отправке в Google Sheets');
+  }
+  return { success: true };
 } 

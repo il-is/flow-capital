@@ -9,8 +9,10 @@ import { usePathname, useRouter } from 'next/navigation'
 const navLinks = [
   { label: 'Главная', to: 'top' },
   { label: 'О компании', to: 'about' },
-  { label: 'Преимущества', to: 'terms' },
-  { label: 'Услуги', to: 'services' },
+  { label: 'Преимущества', to: 'benefits' },
+  { label: 'Как мы работаем', to: 'process' },
+  { label: 'Условия', to: 'terms' },
+  
 ];
 
 export default function Navigation() {

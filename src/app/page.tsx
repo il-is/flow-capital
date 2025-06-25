@@ -240,9 +240,114 @@ function ComparisonTable() {
   );
 }
 
+function SimpleLeadForm() {
+  const [submitted, setSubmitted] = useState(false);
+  const [form, setForm] = useState({ name: '', email: '', phone: '', comment: '' });
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    setForm({ ...form, [e.target.name]: e.target.value });
+    setError('');
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!form.name || !form.email || !form.phone) {
+      setError('Пожалуйста, заполните все обязательные поля.');
+      return;
+    }
+    setLoading(true);
+    setError('');
+    try {
+      const res = await fetch('/api/lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+      let data;
+      try {
+        data = await res.json();
+      } catch {
+        setError('Ошибка: сервер вернул некорректный ответ. Попробуйте позже или обратитесь к поддержке.');
+        setLoading(false);
+        return;
+      }
+      if (data.success) {
+        setSubmitted(true);
+      } else {
+        setError(data.error || 'Ошибка при отправке.');
+      }
+    } catch (err) {
+      setError('Ошибка при отправке.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center">
+      <div className="w-full max-w-md bg-white rounded-xl shadow-lg p-8 mx-auto">
+        {submitted ? (
+          <div className="text-green-600 text-center font-semibold py-8">Спасибо! Ваша заявка отправлена.</div>
+        ) : (
+          <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+            <input
+              className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+              type="text"
+              name="name"
+              placeholder="Ваше имя*"
+              value={form.name}
+              onChange={handleChange}
+              required
+            />
+            <input
+              className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+              type="email"
+              name="email"
+              placeholder="Email*"
+              value={form.email}
+              onChange={handleChange}
+              required
+            />
+            <input
+              className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 text-black"
+              type="tel"
+              name="phone"
+              placeholder="Телефон*"
+              value={form.phone}
+              onChange={handleChange}
+              required
+            />
+            <textarea
+              className="border rounded px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 min-h-[80px] text-black"
+              name="comment"
+              placeholder="Комментарий (необязательно)"
+              value={form.comment}
+              onChange={handleChange}
+            />
+            {error && <div className="text-red-500 text-sm text-center">{error}</div>}
+            <button
+              type="submit"
+              className="bg-blue-600 text-white rounded px-4 py-2 font-semibold hover:bg-blue-700 transition disabled:opacity-60"
+              disabled={loading}
+            >
+              {loading ? 'Отправка...' : 'Отправить'}
+            </button>
+            <div className="text-xs text-gray-400 text-center mt-2">
+              Нажимая на кнопку, вы соглашаетесь с <a href="/privacy-policy" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-400">условиями обработки персональных данных</a>
+            </div>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Home() {
   return (
     <main className="min-h-screen bg-gradient-to-b from-gray-900 to-black text-white">
+      <div className="pt-0">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center">
         <div className="absolute inset-0 z-0">
@@ -263,7 +368,7 @@ export default function Home() {
           >
             <h1 className="text-6xl font-bold mb-8">Flow.Capital</h1>
             <p className="text-2xl mb-12 max-w-2xl mx-auto">
-              Мы соединяем компании с умными инвестициями
+              Финансируем перспективные компании
             </p>
             <div className="space-x-4">
               {/*<Link href="/startups" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg text-lg">
@@ -299,7 +404,7 @@ export default function Home() {
             </div>
             <div className="relative h-[400px] rounded-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=2070"
+                src="https://images.unsplash.com/photo-1504607798333-52a30db54a5d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="About Us"
                 fill
                 className="object-cover"
@@ -309,156 +414,8 @@ export default function Home() {
           </motion.div>
         </div>
       </section>
-
-      {/* Target Audience & Terms Section */}
-      <section id="terms" className="py-20 bg-gradient-to-br from-gray-950 to-gray-900">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-4xl font-bold text-center mb-16"
-          >
-            Преимущества и условия
-          </motion.h2>
-          <div className="grid md:grid-cols-2 gap-10">
-           {/* Для стартапов */}
-           <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400"><RocketIcon /></span>
-                <h3 className="text-2xl font-bold">Для стартапов</h3>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Преимущества:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Доступ к умным деньгам: капитал, экспертиза, поддержка</li>
-                  <li>Гибкая структура сделки, учёт интересов фаундеров</li>
-                  <li>Различные форматы сделок: cash-in, cash-out, exit</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Условия:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
-                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
-                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
-                </ul>
-              </div>
-            </motion.div>
-            {/* Для инвесторов */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400"><ChartBarIcon /></span>
-                <h3 className="text-2xl font-bold">Для инвесторов</h3>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Преимущества:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                    <li>Прозрачность и юридическое сопровождение</li>
-                    <li>Гибкие форматы участия (SPV, договорная модель)</li>
-                    <li>Доступ к отобранным сделкам с высоким потенциалом роста</li>
-                    <li>Возможность синергии с основным бизнесом</li>
-                </ul>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Условия:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Порог входа — от 10 млн ₽</li>
-                </ul>
-              </div>
-            </motion.div>
-            
-          </div>
-        </div>
-      </section>
-
-      {/* Comparison Section */}
-      <section className="py-20 bg-gradient-to-br from-gray-900 to-gray-950">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-4xl font-bold text-center mb-12"
-          >
-            Сравнение инвестиционных подходов
-          </motion.h2>
-          <ComparisonTable />
-        </div>
-      </section>
-
-      {/* Services Section */}
-      <section id="services" className="py-20 bg-black">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-4xl font-bold text-center mb-16"
-          >
-            Наши услуги
-          </motion.h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "Инвестиции в стартапы",
-                description: "Финансирование перспективных проектов на ранних стадиях",
-                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070"
-              },
-              {
-                title: "Консультации",
-                description: "Профессиональная поддержка в развитии бизнеса",
-                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070"
-              },
-              {
-                title: "Сетевые возможности",
-                description: "Доступ к широкой сети инвесторов и партнеров",
-                image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2070"
-              }
-            ].map((service, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="bg-gray-800 rounded-lg overflow-hidden"
-              >
-                <div className="relative h-48">
-                  <Image
-                    src={service.image}
-                    alt={service.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl font-bold mb-3">{service.title}</h3>
-                  <p className="text-gray-300">{service.description}</p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Benefits Section */}
-      <section id="benefits" className="py-20 bg-gradient-to-br from-gray-900 to-black">
+{/* Benefits Section */}
+<section id="benefits" className="py-20 bg-gradient-to-br from-gray-900 to-black">
         <div className="container mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -513,9 +470,241 @@ export default function Home() {
           </div>
         </div>
       </section>
+      {/* Process Section */}
+      <section id="process" className="py-20 bg-black">
+        <div className="container mx-auto px-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-center mb-16"
+          >
+            Как мы работаем
+          </motion.h2>
+          <div className="grid md:grid-cols-4 gap-8">
+            {[
+              {
+                step: "01",
+                title: "Поиск",
+                description: "Отбор перспективных стартапов экспертами Flow.Capital"
+              },
+              {
+                step: "02",
+                title: "Заключение договора",
+                description: "Подготовка необходимых документов для начала работы с Flow.Capital и инвесторами"
+              },
+              {
+                step: "03",
+                title: "Выход на инвесторов",
+                description: "Презентация проекта инвесторам Flow.Capital"
+              },
+              {
+                step: "04",
+                title: "Проведение сделки",
+                description: "Завершение сделки с инвестором"
+              }
+            ].map((step, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                className="text-center"
+              >
+                <div className="text-6xl font-bold text-blue-600 mb-4">{step.step}</div>
+                <h3 className="text-xl font-bold mb-2">{step.title}</h3>
+                <p className="text-gray-300">{step.description}</p>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+      {/* Target Audience & Terms Section */}
+      <section id="terms" className="py-20 bg-gradient-to-br from-gray-950 to-gray-900">
+        <div className="container mx-auto px-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-center mb-16"
+          >
+             Условия сотрудничества
+          </motion.h2>
+          <div className="grid md:grid-cols-2 gap-10">
+           {/* Для стартапов */}
+           <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-blue-400"><RocketIcon /></span>
+                <h3 className="text-2xl font-bold">Условие 1</h3>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Условия:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
+                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
+                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
+                </ul>
+              </div>
+            </motion.div>
+            {/* Для стартапов */}
+           <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-blue-400"><RocketIcon /></span>
+                <h3 className="text-2xl font-bold">Условие 2</h3>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Условия:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
+                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
+                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
+                </ul>
+              </div>
+            </motion.div>
+            {/* Для стартапов */}
+           <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-blue-400"><RocketIcon /></span>
+                <h3 className="text-2xl font-bold">Условие 3</h3>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Условия:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
+                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
+                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
+                </ul>
+              </div>
+            </motion.div>
+            {/* Для инвесторов */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8 }}
+              viewport={{ once: true }}
+              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-blue-400"><ChartBarIcon /></span>
+                <h3 className="text-2xl font-bold">Условие 4</h3>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Преимущества:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Прозрачность и юридическое сопровождение</li>
+                  <li>Гибкие форматы участия (SPV, договорная модель)</li>
+                  <li>Доступ к отобранным сделкам с высоким потенциалом роста</li>
+                  <li>Возможность синергии с основным бизнесом</li>
+                </ul>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Условия:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>Порог входа — от 10 млн ₽</li>
+                </ul>
+              </div>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* Comparison Section */}
+      {/*<section className="py-20 bg-gradient-to-br from-gray-900 to-gray-950">
+        <div className="container mx-auto px-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-center mb-12"
+          >
+            Сравнение инвестиционных подходов
+          </motion.h2>
+          <ComparisonTable />
+        </div>
+      </section>
+
+      {/* Services Section */}
+      {/*<section id="services" className="py-20 bg-black">
+        <div className="container mx-auto px-4">
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+            className="text-4xl font-bold text-center mb-16"
+          >
+           Наши услуги
+          </motion.h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                title: "Инвестиции в стартапы",
+                description: "Финансирование перспективных проектов на ранних стадиях",
+                image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=2070"
+              },
+              {
+                title: "Консультации",
+                description: "Профессиональная поддержка в развитии бизнеса",
+                image: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=2070"
+              },
+              {
+                title: "Сетевые возможности",
+                description: "Доступ к широкой сети инвесторов и партнеров",
+                image: "https://images.unsplash.com/photo-1557804506-669a67965ba0?q=80&w=2070"
+              }
+            ].map((service, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8, delay: index * 0.2 }}
+                viewport={{ once: true }}
+                className="bg-gray-800 rounded-lg overflow-hidden"
+              >
+                <div className="relative h-48">
+                  <Image
+                    src={service.image}
+                    alt={service.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+                <div className="p-6">
+                  <h3 className="text-xl font-bold mb-3">{service.title}</h3>
+                  <p className="text-gray-300">{service.description}</p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+*/}
+      
 
       {/* Why Choose Us Section */}
-      <section className="py-20 bg-gray-900">
+      {/*<section className="py-20 bg-gray-900">
         <div className="container mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -566,57 +755,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Process Section */}
-      <section className="py-20 bg-black">
-        <div className="container mx-auto px-4">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8 }}
-            viewport={{ once: true }}
-            className="text-4xl font-bold text-center mb-16"
-          >
-            Как мы работаем
-          </motion.h2>
-          <div className="grid md:grid-cols-4 gap-8">
-            {[
-              {
-                step: "01",
-                title: "Анализ",
-                description: "Изучаем проект и рынок"
-              },
-              {
-                step: "02",
-                title: "Заключение договора",
-                description: "Заключаем договор"
-              },
-              {
-                step: "03",
-                title: "Подбор инвестиций",
-                description: "Подбираем инвесторов"
-              },
-              {
-                step: "04",
-                title: "Проведение сделки",
-                description: "Структурируем сделку"
-              }
-            ].map((step, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.8, delay: index * 0.2 }}
-                viewport={{ once: true }}
-                className="text-center"
-              >
-                <div className="text-6xl font-bold text-blue-600 mb-4">{step.step}</div>
-                <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                <p className="text-gray-300">{step.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
+      
 
       {/* CTA Section */}
       <section id="cta" className="py-20 bg-gradient-to-r from-blue-600 to-indigo-700">
@@ -629,16 +768,9 @@ export default function Home() {
           >
             <h2 className="text-4xl font-bold mb-6">Готовы начать?</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
-              От взаимовыгодного сотрудничества нас отделяет заявка
+              Оставьте заявку — мы свяжемся с вами в ближайшее время
             </p>
-            <div className="space-x-4">
-              <Link href="/startups" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg text-lg">
-                Для стартапа
-              </Link>
-              <Link href="/investors" className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-3 rounded-lg text-lg">
-                Для инвестора
-              </Link>
-            </div>
+            <SimpleLeadForm />
           </motion.div>
         </div>
       </section>
@@ -658,7 +790,7 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-center gap-12 text-lg text-gray-300">
             <div className="flex-1 text-center">
               <div className="mb-2 font-semibold text-white">Email</div>
-              <div>info@flow.capital</div>
+              <div>i2990137@gmail.com</div>
             </div>
             <div className="flex-1 text-center">
               <div className="mb-2 font-semibold text-white">Телефон</div>
@@ -666,12 +798,14 @@ export default function Home() {
             </div>
             <div className="flex-1 text-center">
               <div className="mb-2 font-semibold text-white">Адрес</div>
-              <div>Москва, ул. Примерная, 1</div>
+              <div>Москва, Пресненская наб., 12 </div>
             </div>
             <div className="flex-1 text-center">
               <div className="mb-2 font-semibold text-white">Соцсети</div>
               <div className="flex justify-center gap-3 mt-1">
-              <a href="#" className="hover:text-blue-400" aria-label="Telegram"><svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M9.036 15.684l-.396 4.09c.568 0 .814-.244 1.112-.537l2.664-2.53 5.522 4.04c1.012.557 1.73.264 1.98-.937l3.59-16.84c.327-1.513-.547-2.104-1.523-1.75L1.36 9.36c-1.48.57-1.46 1.38-.253 1.75l4.31 1.347 10.01-6.31c.47-.29.9-.13.55.18"/></svg></a>
+              <a href="https://t.me/ilya_isachenkov" target="_blank" rel="noopener noreferrer" className="hover:text-blue-400" aria-label="Telegram">
+                <svg width="22" height="22" fill="currentColor" viewBox="0 0 24 24"><path d="M9.036 15.684l-.396 4.09c.568 0 .814-.244 1.112-.537l2.664-2.53 5.522 4.04c1.012.557 1.73.264 1.98-.937l3.59-16.84c.327-1.513-.547-2.104-1.523-1.75L1.36 9.36c-1.48.57-1.46 1.38-.253 1.75l4.31 1.347 10.01-6.31c.47-.29.9-.13.55.18"/></svg>
+              </a>
               </div>
             </div>
           </div>
@@ -691,6 +825,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
+      </div>
     </main>
   )
 }
