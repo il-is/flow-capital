@@ -79,7 +79,6 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
   try {
     console.log('Starting submission process...')
     console.log('GOOGLE_SCRIPT_URL:', GOOGLE_SCRIPT_URL)
-    console.log('Google Apps Script rawText:', rawText);
 
     const submissionId = Date.now().toString()
     console.log('Generated submissionId:', submissionId)
@@ -162,6 +161,7 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
 
     console.log('Google Apps Script response status:', response.status)
     const rawText = await response.text()
+    console.log('Google Apps Script rawText:', rawText);
     let responseData
     try {
       responseData = JSON.parse(rawText)
@@ -230,6 +230,7 @@ export async function submitLeadToGoogleSheet(data: { name: string; email: strin
     }),
   });
   const rawText = await response.text();
+  console.log('Google Apps Script rawText:', rawText);
   let responseData;
   try {
     responseData = JSON.parse(rawText);

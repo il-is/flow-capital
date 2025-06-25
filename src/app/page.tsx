@@ -544,7 +544,28 @@ export default function Home() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-blue-400"><RocketIcon /></span>
-                <h3 className="text-2xl font-bold">Условие 1</h3>
+                <h3 className="text-2xl font-bold">Сфера деятельности</h3>
+              </div>
+              <div>
+                <h4 className="font-semibold mb-2">Условия:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  <li>AI/ML Проекты</li>
+                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
+                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
+                </ul>
+              </div>
+            </motion.div>
+            {/* Для стартапов */}
+           <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.2 }}
+              viewport={{ once: true }}
+              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
+            >
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-blue-400"><RocketIcon /></span>
+                <h3 className="text-2xl font-bold">Стадия</h3>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Условия:</h4>
@@ -565,35 +586,12 @@ export default function Home() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-blue-400"><RocketIcon /></span>
-                <h3 className="text-2xl font-bold">Условие 2</h3>
+                <h3 className="text-2xl font-bold">Запрашиваемые инвестиции</h3>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Условия:</h4>
                 <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
-                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
-                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
-                </ul>
-              </div>
-            </motion.div>
-            {/* Для стартапов */}
-           <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              viewport={{ once: true }}
-              className="bg-gray-800 rounded-2xl shadow-lg p-8 flex flex-col gap-6"
-            >
-              <div className="flex items-center gap-3 mb-2">
-                <span className="text-blue-400"><RocketIcon /></span>
-                <h3 className="text-2xl font-bold">Условие 3</h3>
-              </div>
-              <div>
-                <h4 className="font-semibold mb-2">Условия:</h4>
-                <ul className="list-disc list-inside text-gray-300 space-y-1">
-                  <li>Компании с сильной командой и подтверждённым потенциалом роста</li>
-                  <li>Growth-стартапы и зрелые бизнесы, готовые к масштабированию</li>
-                  <li>Проекты с амбициями выхода на новые рынки и инновациями</li>
+                  <li>Сделки заключаются на сумму от 10 млн ₽ до 500 млн ₽</li>
                 </ul>
               </div>
             </motion.div>
@@ -607,7 +605,7 @@ export default function Home() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-blue-400"><ChartBarIcon /></span>
-                <h3 className="text-2xl font-bold">Условие 4</h3>
+                <h3 className="text-2xl font-bold">Финансовые условия</h3>
               </div>
               <div>
                 <h4 className="font-semibold mb-2">Преимущества:</h4>
@@ -766,7 +764,7 @@ export default function Home() {
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-4xl font-bold mb-6">Готовы начать?</h2>
+            <h2 className="text-4xl font-bold mb-6">Оставить заявку</h2>
             <p className="text-xl mb-8 max-w-2xl mx-auto">
               Оставьте заявку — мы свяжемся с вами в ближайшее время
             </p>
