@@ -5,13 +5,13 @@ import { useState, useEffect } from 'react'
 import { Bars3Icon, XMarkIcon } from '@heroicons/react/24/outline'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePathname, useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 const navLinks = [
   { label: 'Главная', to: 'top' },
   { label: 'О компании', to: 'about' },
   { label: 'Преимущества', to: 'benefits' },
   { label: 'Как мы работаем', to: 'process' },
-  { label: 'Условия', to: 'terms' },
   
 ];
 
@@ -100,13 +100,14 @@ export default function Navigation() {
         <nav className="container mx-auto px-4 flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl focus:outline-none" aria-label="Flow.Capital">
-            {/* Минималистичный flow-логотип */}
-            <span className="text-blue-400" aria-hidden>
-              <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M3 18C6 22 12 22 15 18C18 14 22 14 25 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                <path d="M3 10C6 6 12 6 15 10C18 14 22 14 25 10" stroke="#3B82F6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-            </span>
+            <Image
+              src="/uploads/logo wo text 2.png"
+              alt="Flow.Capital Logo"
+              width={100}
+              height={100}
+              className=""
+              priority
+            />
             Flow.Capital
           </Link>
           {/* Desktop nav */}
@@ -170,12 +171,14 @@ export default function Navigation() {
                 <XMarkIcon className="h-7 w-7" />
               </button>
               <div className="flex items-center gap-2 text-white font-bold text-xl mb-4 mt-2">
-                <span className="text-blue-400">
-                  <svg width="28" height="28" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M3 18C6 22 12 22 15 18C18 14 22 14 25 18" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                    <path d="M3 10C6 6 12 6 15 10C18 14 22 14 25 10" stroke="#3B82F6" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                </span>
+                <Image
+                  src="/uploads/logo wo text 2.png"
+                  alt="Flow.Capital Logo"
+                  width={40}
+                  height={40}
+                  className=""
+                  priority
+                />
                 Flow.Capital
               </div>
               <div className="flex flex-col gap-3 mt-4">

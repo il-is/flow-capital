@@ -388,16 +388,16 @@ export default function Home() {
             <div>
               <h2 className="text-4xl font-bold mb-6">О компании</h2>
               <p className="text-lg text-gray-300 mb-6">
-              Flow.Capital — венчурный фонд бутикового формата. Мы отбираем проекты с потенциалом кратного роста, выстраиваем понятные сделки и сопровождаем весь процесс до выхода.
+              Flow.Capital — венчурная компания бутикового формата. Мы отбираем проекты с потенциалом кратного роста и выстраиваем прозрачный процесс привлечения капитала — через equity или debt fundraising.
               </p>
               <h2 className="text-4xl font-bold mb-6">Миссия</h2>
               <p className="text-lg text-gray-300 mb-6">
-                Сделать венчурный рынок в России доступным, понятным и живым: чтобы у сильных команд был шанс на рост, а у инвесторов — на прозрачные и гибкие сделки.
+              Сделать рынок капитала доступным для перспективных компаний.
               </p>
             </div>
             <div className="relative h-[400px] rounded-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1504607798333-52a30db54a5d?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src="https://images.unsplash.com/photo-1579227114496-27346f474519?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="About Us"
                 fill
                 className="object-cover"
@@ -420,7 +420,7 @@ export default function Home() {
             Преимущества работы с Flow.Capital
           </motion.h2>
           <div className="grid md:grid-cols-2 gap-10">
-            {/* Стартапы */}
+            {/* Доступ к "умным деньгам" */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -430,17 +430,14 @@ export default function Home() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-blue-400"><RocketIcon /></span>
-                <h3 className="text-2xl font-bold">Для стартапов</h3>
+                <h3 className="text-2xl font-bold">Порядок работы</h3>
               </div>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
-                <li>Доступ к "умным деньгам" — не только капитал, но и экспертиза, связи, менторство</li>
-                <li>Гибкая структура сделки, учёт интересов фаундеров</li>
-                <li>Возможность частичного cash-out на стадии роста</li>
-                <li>Поддержка при масштабировании и выходе на международные рынки</li>
-                <li>Прозрачность и юридическое сопровождение</li>
+                <li>Наличие договоренностей с инвесторами</li>
+                <li>Сфокусированность на проекте</li>
               </ul>
             </motion.div>
-            {/* Инвесторы */}
+            {/* Условия */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -450,14 +447,14 @@ export default function Home() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-blue-400"><ChartBarIcon /></span>
-                <h3 className="text-2xl font-bold">Для инвесторов</h3>
+                <h3 className="text-2xl font-bold">Условия</h3>
               </div>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
-                <li>Доступ к тщательно отобранным сделкам с высоким потенциалом роста</li>
-                <li>Гибкие форматы участия (SPV, договорная модель)</li>
+                <li>Гибкая структура сделки, учёт интересов фаундеров</li>
                 <li>Порог входа — от 10 млн ₽</li>
                 <li>Структурированное сопровождение, юридическая прозрачность</li>
-                <li>Возможность синергии с основным бизнесом или отраслью</li>
+                <li>Возможность частичного cash-out на стадии роста</li>
+
               </ul>
             </motion.div>
           </div>
@@ -515,7 +512,7 @@ export default function Home() {
         </div>
       </section>
       {/* Target Audience & Terms Section */}
-      <section id="terms" className="py-20 bg-gradient-to-br from-gray-950 to-gray-900">
+      {/*<section id="terms" className="py-20 bg-gradient-to-br from-gray-950 to-gray-900">
         <div className="container mx-auto px-4">
           <motion.h2
             initial={{ opacity: 0, y: 20 }}
@@ -528,7 +525,7 @@ export default function Home() {
           </motion.h2>
           <div className="grid md:grid-cols-2 gap-10">
            {/* Для стартапов */}
-           <motion.div
+          {/* <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -549,7 +546,7 @@ export default function Home() {
               </div>
             </motion.div>
             {/* Для стартапов */}
-           <motion.div
+           {/*<motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -570,7 +567,7 @@ export default function Home() {
               </div>
             </motion.div>
             {/* Для стартапов */}
-           <motion.div
+          {/*<motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
@@ -587,9 +584,9 @@ export default function Home() {
                   <li>Сделки заключаются на сумму от 10 млн ₽ до 500 млн ₽</li>
                 </ul>
               </div>
-            </motion.div>
+            </motion.div>*/}
             {/* Для инвесторов */}
-            <motion.div
+            {/*<motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
@@ -618,7 +615,7 @@ export default function Home() {
             </motion.div>
           </div>
         </div>
-      </section>
+      </section>*/}
 
       {/* Comparison Section */}
       {/*<section className="py-20 bg-gradient-to-br from-gray-900 to-gray-950">
@@ -804,13 +801,21 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-gray-800 py-8 mt-0">
+      <footer className="bg-black border-t border-gray-800 py-0 mt-0">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
+            <Image
+              src="/uploads/logo wo text 2.png"
+              alt="Flow.Capital Logo"
+              width={100}
+              height={100}
+              className=""
+              priority
+            />
             <span className="text-2xl font-bold text-white">Flow.Capital</span>
             <span className="text-xs text-gray-400">© {new Date().getFullYear()} Все права защищены</span>
           </div>
-          <nav className="flex gap-6 text-gray-400 text-sm">
+          <nav className="flex gap-4 text-gray-400 text-sm">
           </nav>
           <div className="flex gap-4 text-gray-400">
           </div>
