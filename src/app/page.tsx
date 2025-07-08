@@ -397,7 +397,7 @@ export default function Home() {
             </div>
             <div className="relative h-[400px] rounded-lg overflow-hidden">
               <Image
-                src="https://images.unsplash.com/photo-1579227114496-27346f474519?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                src="https://images.unsplash.com/photo-1462899006636-339e08d1844e?q=80&w=1740&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
                 alt="About Us"
                 fill
                 className="object-cover"
@@ -417,7 +417,7 @@ export default function Home() {
             viewport={{ once: true }}
             className="text-4xl font-bold text-center mb-16"
           >
-            Преимущества работы с Flow.Capital
+            Преимущества
           </motion.h2>
           <div className="grid md:grid-cols-2 gap-10">
             {/* Доступ к "умным деньгам" */}
@@ -430,11 +430,13 @@ export default function Home() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-blue-400"><RocketIcon /></span>
-                <h3 className="text-2xl font-bold">Порядок работы</h3>
+                <h3 className="text-2xl font-bold">Для стартапов</h3>
               </div>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
                 <li>Наличие договоренностей с инвесторами</li>
-                <li>Сфокусированность на проекте</li>
+                <li>Прямой выход на частных и стратегических инвесторов</li>
+                <li>Гибкая структура сделки: cash-in, cash-out, exit</li>
+                <li>Содействие в масштабировании и выходе на новые рынки</li>
               </ul>
             </motion.div>
             {/* Условия */}
@@ -447,14 +449,10 @@ export default function Home() {
             >
               <div className="flex items-center gap-3 mb-2">
                 <span className="text-blue-400"><ChartBarIcon /></span>
-                <h3 className="text-2xl font-bold">Условия</h3>
+                <h3 className="text-2xl font-bold">Для инвесторов</h3>
               </div>
               <ul className="list-disc list-inside text-gray-300 space-y-2">
-                <li>Гибкая структура сделки, учёт интересов фаундеров</li>
-                <li>Порог входа — от 10 млн ₽</li>
-                <li>Структурированное сопровождение, юридическая прозрачность</li>
-                <li>Возможность частичного cash-out на стадии роста</li>
-
+                <li>Условия участия обсуждаются индивидуально</li>
               </ul>
             </motion.div>
           </div>
@@ -472,27 +470,22 @@ export default function Home() {
           >
             Как мы работаем
           </motion.h2>
-          <div className="grid md:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-3 gap-8">
             {[
               {
                 step: "01",
                 title: "Поиск",
-                description: "Отбор перспективных стартапов экспертами Flow.Capital"
+                description: "Поиск перспективных компаний"
               },
               {
                 step: "02",
-                title: "Заключение договора",
-                description: "Подготовка необходимых документов для начала работы с Flow.Capital и инвесторами"
+                title: "Структурирование",
+                description: "Подготовка документов и материалов"
               },
               {
                 step: "03",
-                title: "Выход на инвесторов",
-                description: "Презентация проекта инвесторам Flow.Capital"
-              },
-              {
-                step: "04",
-                title: "Проведение сделки",
-                description: "Завершение сделки с инвестором"
+                title: "Сделка",
+                description: "Заключение и финансирование"
               }
             ].map((step, index) => (
               <motion.div
@@ -584,7 +577,7 @@ export default function Home() {
                   <li>Сделки заключаются на сумму от 10 млн ₽ до 500 млн ₽</li>
                 </ul>
               </div>
-            </motion.div>*/}
+            </motion.div>
             {/* Для инвесторов */}
             {/*<motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -778,11 +771,11 @@ export default function Home() {
           <div className="flex flex-col md:flex-row justify-center gap-12 text-lg text-gray-300">
             <div className="flex-1 text-center">
               <div className="mb-2 font-semibold text-white">Email</div>
-              <div>i2990137@gmail.com</div>
+              <div>hello@flow-capital.ru</div>
             </div>
             <div className="flex-1 text-center">
               <div className="mb-2 font-semibold text-white">Телефон</div>
-              <div>+7 (999) 123-45-67</div>
+              <div>+7 (993) 370-97-62</div>
             </div>
             <div className="flex-1 text-center">
               <div className="mb-2 font-semibold text-white">Адрес</div>
