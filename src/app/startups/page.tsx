@@ -5,6 +5,7 @@ import { motion } from 'framer-motion'
 import { useForm } from 'react-hook-form'
 import LoadingModal from '@/components/LoadingModal'
 import { useRouter } from 'next/navigation'
+import Image from 'next/image'
 
 const SECTION_TITLES = [
   'Основная',
@@ -591,6 +592,14 @@ export default function StartupPage() {
       <footer className="bg-black border-t border-gray-800 py-8 mt-0">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
+            <Image
+              src="/uploads/20250702_1736_Flow. Capital Logo_simple_compose_01jz5s1dttejqsh8w0435jgzra.png"
+              alt="Flow.Capital Logo"
+              width={60}
+              height={60}
+              className=""
+              priority
+            />
             <span className="text-2xl font-bold text-white">Flow.Capital</span>
             <span className="text-xs text-gray-400">© {new Date().getFullYear()} Все права защищены</span>
           </div>

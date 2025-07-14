@@ -172,9 +172,9 @@ export default function Navigation() {
               </button>
               <div className="flex items-center gap-2 text-white font-bold text-xl mb-4 mt-2">
                 <Image
-                  src="/uploads/logo wo text 2.png"
+                  src="/uploads/20250702_1736_Flow. Capital Logo_simple_compose_01jz5s1dttejqsh8w0435jgzra.png"
                   alt="Flow.Capital Logo"
-                  width={40}
+                  width={60}
                   height={40}
                   className=""
                   priority
