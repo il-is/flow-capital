@@ -794,14 +794,14 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-black border-t border-gray-800 py-0 mt-0">
+      <footer className="bg-black border-t border-gray-800 py-2 mt-0">
         <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="flex items-center gap-3">
             <Image
-              src="/uploads/logo wo text 2.png"
+              src="/uploads/20250702_1736_Flow. Capital Logo_simple_compose_01jz5s1dttejqsh8w0435jgzra.png"
               alt="Flow.Capital Logo"
-              width={100}
-              height={100}
+              width={60}
+              height={60}
               className=""
               priority
             />

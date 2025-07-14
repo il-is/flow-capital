@@ -96,15 +96,15 @@ export default function Navigation() {
 
   return (
     <>
-      <header className="w-full bg-black/80 backdrop-blur sticky top-0 z-30 shadow-md">
+      <header className="w-full bg-black/80 backdrop-blur sticky top-0 z-30 shadow-md py-0">
         <nav className="container mx-auto px-4 flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 text-white font-bold text-xl focus:outline-none" aria-label="Flow.Capital">
             <Image
-              src="/uploads/logo wo text 2.png"
+              src="/uploads/20250702_1736_Flow. Capital Logo_simple_compose_01jz5s1dttejqsh8w0435jgzra.png"
               alt="Flow.Capital Logo"
-              width={100}
-              height={100}
+              width={60}
+              height={60}
               className=""
               priority
             />
