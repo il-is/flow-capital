@@ -8,13 +8,12 @@ import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
 const SECTION_TITLES = [
-  'Основная',
+  'Интро',
   'Команда',
-  'Технологии',
-  'Продукт',
+  'Продукт и технологии',
   'Финансы',
   'Риски',
-  'Контакты',
+  'Завершение',
 ];
 
 const INFO_ICON = (
@@ -26,40 +25,50 @@ const INFO_ICON = (
 );
 
 type FormData = {
+  // Интро
   companyName: string;
-  industry: string;
   contactName: string;
   email: string;
   phone: string;
-  description: string;
+  
+  // Команда
   teamExperience: string;
   teamMembers: string;
-  teamJointExp: string;
-  vision: string;
-  investorExp: string;
-  techNovelty: string;
-  rndInfra: string;
-  scalability: string;
+  teamComment: string;
+  
+  // Продукт и технологии
   productDescription: string;
-  productUnique: string;
+  productAvailability: string;
+  productAudience: string;
+  uniqueSellingPoint: string;
+  productUniqueness: string;
+  researchAvailability: string;
+  techScalability: string;
   marketSize: string;
-  competAdv: string;
-  traction: string;
-  investment: string;
+  productTechComment: string;
+  
+  // Финансы
+  currentSales: string;
+  currentUsers: string;
+  investmentAmount: string;
+  equityPercentage: string;
   investmentPlan: string;
-  scalingForecast: string;
+  geographicScalability: string;
+  unitEconomics: string;
   currentInvestments: string;
   capTable: string;
+  companyValuation: string;
+  financeComment: string;
+  
+  // Риски
+  marketRisks: string;
+  operationalRisks: string;
   companyRegistration: string;
-  contracts: string;
-  noDisputes: string;
-  unitEconomics: string;
-  licenses: string;
-  ipClean: string;
-  risks: string;
-  financials: string;
-  competitors: string;
-  uniqueSellingPoint: string;
+  licensesCompliance: string;
+  risksComment: string;
+  
+  // Завершение
+  growthLimitations: string;
 }
 
 export default function StartupPage() {
@@ -69,37 +78,38 @@ export default function StartupPage() {
     mode: 'onChange',
     defaultValues: {
       companyName: '',
-      industry: '',
       contactName: '',
       email: '',
       phone: '',
-      description: '',
       teamExperience: '',
       teamMembers: '',
-      teamJointExp: '',
-      vision: '',
-      investorExp: '',
-      techNovelty: '',
-      rndInfra: '',
-      scalability: '',
+      teamComment: '',
       productDescription: '',
-      productUnique: '',
+      productAvailability: '',
+      productAudience: '',
+      uniqueSellingPoint: '',
+      productUniqueness: '',
+      researchAvailability: '',
+      techScalability: '',
       marketSize: '',
-      competAdv: '',
-      traction: '',
-      investment: '',
+      productTechComment: '',
+      currentSales: '',
+      currentUsers: '',
+      investmentAmount: '',
+      equityPercentage: '',
       investmentPlan: '',
-      scalingForecast: '',
+      geographicScalability: '',
+      unitEconomics: '',
       currentInvestments: '',
       capTable: '',
+      companyValuation: '',
+      financeComment: '',
+      marketRisks: '',
+      operationalRisks: '',
       companyRegistration: '',
-      contracts: '',
-      noDisputes: '',
-      licenses: '',
-      ipClean: '',
-      risks: '',
-      financials: '',
-      competitors: ''
+      licensesCompliance: '',
+      risksComment: '',
+      growthLimitations: ''
     }
   })
   const [pitchDeck, setPitchDeck] = useState<File | null>(null)
@@ -181,19 +191,17 @@ export default function StartupPage() {
   function getSectionFields(section: number): (keyof FormData)[] {
     switch (section) {
       case 1:
-        return ['companyName', 'industry', 'description']
+        return ['companyName', 'contactName', 'phone']
       case 2:
-        return ['teamExperience', 'teamMembers', 'teamJointExp', 'vision', 'investorExp']
+        return ['teamExperience', 'teamMembers']
       case 3:
-        return ['techNovelty', 'rndInfra', 'scalability']
+        return ['productDescription', 'productAvailability', 'productAudience', 'uniqueSellingPoint', 'productUniqueness', 'researchAvailability', 'techScalability', 'marketSize']
       case 4:
-        return ['productDescription', 'productUnique', 'marketSize', 'competAdv']
+        return ['currentSales', 'currentUsers', 'investmentAmount', 'equityPercentage', 'investmentPlan', 'geographicScalability', 'unitEconomics', 'currentInvestments', 'capTable', 'companyValuation']
       case 5:
-        return ['traction', 'investment', 'investmentPlan', 'scalingForecast', 'currentInvestments', 'capTable']
+        return ['marketRisks', 'operationalRisks', 'companyRegistration', 'licensesCompliance']
       case 6:
-        return ['companyRegistration', 'contracts', 'noDisputes', 'licenses', 'ipClean', 'risks', 'financials', 'competitors']
-      case 7:
-        return ['contactName', 'email', 'phone']
+        return ['growthLimitations']
       default:
         return []
     }
@@ -247,7 +255,7 @@ export default function StartupPage() {
   const sectionNav = (
     <div className="mb-8">
       <div className="flex gap-6 mb-2 px-2 -mx-2 flex-wrap justify-center">
-        {[1,2,3,4,5,6,7].map((i) => {
+        {[1,2,3,4,5,6].map((i) => {
           const filledCount = getFilledFieldsCount(i);
           const requiredCount = getRequiredFieldsCount(i);
           const progress = requiredCount > 0 ? Math.round((filledCount / requiredCount) * 100) : 0;
@@ -333,23 +341,22 @@ export default function StartupPage() {
                     <div className="min-h-[22px]">{triedNext && errors.companyName && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}</div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Сфера деятельности</label>
-                    <select {...register('industry', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('industry')} onBlur={() => setFocusedField(null)}>
-                      <option value="">Выберите сферу</option>
-                      <option value="fintech">Финтех</option>
-                      <option value="ai">AI/ML</option>
-                      <option value="retail">Ритейл</option>
-                      <option value="tech">Технологии</option>
-                      <option value="other">Другое, укажу в описании</option>
-                    </select>
-                    <CharLimit limit={100} field="industry" />
-                    <div className="min-h-[22px]">{triedNext && errors.industry && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}</div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Контактное лицо (ФИО)</label>
+                    <input type="text" {...register('contactName', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('contactName')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={100} field="contactName" />
+                    <div className="min-h-[22px]">{triedNext && errors.contactName && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}</div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Краткое описание стартапа</label>
-                    <textarea {...register('description', { required: true, maxLength: 2000 })} rows={4} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} onFocus={() => setFocusedField('description')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={2000} field="description" />
-                    {triedNext && errors.description && <p className="mt-1 text-sm text-red-600">Это поле обязательно (до 200 слов)</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                    <input type="email" {...register('email')} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={100} field="email" />
+                    <div className="min-h-[22px]">&nbsp;</div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Контактный телефон</label>
+                    <input type="tel" {...register('phone', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('phone')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={30} field="phone" />
+                    <div className="min-h-[22px]">{triedNext && errors.phone && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}</div>
                   </div>
                 </motion.div>
               )}
@@ -362,27 +369,21 @@ export default function StartupPage() {
                   data-step="2"
                 >
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Отраслевая экспертиза команды</label>
-                    <textarea {...register('teamExperience', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Опыт команды проекта в отрасли" onFocus={() => setFocusedField('teamExperience')} onBlur={() => setFocusedField(null)} />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Отраслевая экспертиза</label>
+                    <textarea {...register('teamExperience', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Опыт команды проекта в отрасли, опыт фаундеров" onFocus={() => setFocusedField('teamExperience')} onBlur={() => setFocusedField(null)} />
                     <CharLimit limit={3000} field="teamExperience" />
                     {triedNext && errors.teamExperience && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Прошлые достижения команды</label>
-                    <textarea {...register('teamMembers', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Ваши прошлые успехи: стартапы, выходы, награды" onFocus={() => setFocusedField('teamMembers')} onBlur={() => setFocusedField(null)} />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Полнота команды</label>
+                    <textarea {...register('teamMembers', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Состав вашей команды. Кто уже работает над проектом и какие потребности" onFocus={() => setFocusedField('teamMembers')} onBlur={() => setFocusedField(null)} />
                     <CharLimit limit={2000} field="teamMembers" />
                     {triedNext && errors.teamMembers && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Полнота команды</label>
-                    <textarea {...register('teamJointExp', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Состав вашей команды. Кто уже работает над проектом и открытые вакансии" onFocus={() => setFocusedField('teamJointExp')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={2000} field="teamJointExp" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Сработанность команды</label>
-                    <textarea {...register('vision', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Совместный опыт команды, которая работает над проектом" onFocus={() => setFocusedField('vision')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={3000} field="vision" />
-                    {triedNext && errors.vision && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Комментарий к блоку "Команда"</label>
+                    <textarea {...register('teamComment', { maxLength: 1000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={1000} placeholder="Любой комментарий к блоку 'Команда'. Заполнение необязательно." onFocus={() => setFocusedField('teamComment')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={1000} field="teamComment" />
                   </div>
                 </motion.div>
               )}
@@ -395,21 +396,57 @@ export default function StartupPage() {
                   data-step="3"
                 >
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Видение и стратегия развития</label>
-                    <textarea {...register('techNovelty', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Опишите планы развития проекта и цели" onFocus={() => setFocusedField('techNovelty')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={3000} field="techNovelty" />
-                    {triedNext && errors.techNovelty && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Опишите ваш продукт</label>
+                    <textarea {...register('productDescription', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Опишите проблему и как её решает ваш продукт. Опишите основные применяемые технологии." onFocus={() => setFocusedField('productDescription')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={3000} field="productDescription" />
+                    {triedNext && errors.productDescription && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Наличие продукта</label>
-                    <textarea {...register('rndInfra', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли у вас рабочий прототип или продукт?" onFocus={() => setFocusedField('rndInfra')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={2000} field="rndInfra" />
+                    <textarea {...register('productAvailability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли у вас рабочий прототип или продукт?" onFocus={() => setFocusedField('productAvailability')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="productAvailability" />
+                    {triedNext && errors.productAvailability && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Аудитория продукта</label>
+                    <textarea {...register('productAudience', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите вашу целевую аудиторию" onFocus={() => setFocusedField('productAudience')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="productAudience" />
+                    {triedNext && errors.productAudience && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Уникальное торговое предложение</label>
+                    <textarea {...register('uniqueSellingPoint', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите ваше уникальное торговое предложение" onFocus={() => setFocusedField('uniqueSellingPoint')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="uniqueSellingPoint" />
+                    {triedNext && errors.uniqueSellingPoint && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">Уникальность решения</label>
-                    <textarea {...register('scalability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Насколько ваш продукт уникален?" onFocus={() => setFocusedField('scalability')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={2000} field="scalability" />
-                    {triedNext && errors.scalability && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <textarea {...register('productUniqueness', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Насколько ваш продукт уникален?" onFocus={() => setFocusedField('productUniqueness')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="productUniqueness" />
+                    {triedNext && errors.productUniqueness && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Наличие исследований</label>
+                    <textarea {...register('researchAvailability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите планы развития проекта и цели" onFocus={() => setFocusedField('researchAvailability')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="researchAvailability" />
+                    {triedNext && errors.researchAvailability && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Технологическая масштабируемость</label>
+                    <textarea {...register('techScalability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли какие либо технологические ограничения в проекте? Насколько технически возможно масштабирование?" onFocus={() => setFocusedField('techScalability')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="techScalability" />
+                    {triedNext && errors.techScalability && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Размер рынка</label>
+                    <textarea {...register('marketSize', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Приведите результаты вашего анализа рынка" onFocus={() => setFocusedField('marketSize')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="marketSize" />
+                    {triedNext && errors.marketSize && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Комментарий к блоку "Продукт и технологии"</label>
+                    <textarea {...register('productTechComment', { maxLength: 1000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={1000} placeholder="Любой комментарий к блоку 'Продукт и технологии'. Заполнение необязательно." onFocus={() => setFocusedField('productTechComment')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={1000} field="productTechComment" />
                   </div>
                 </motion.div>
               )}
@@ -422,32 +459,67 @@ export default function StartupPage() {
                   data-step="4"
                 >
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Инновационность технологий</label>
-                    <textarea {...register('productDescription', { required: true, maxLength: 1000 })} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Какие технологии применяются в проекте?" />
-                    <CharLimit limit={1000} field="productDescription" />
-                    {triedNext && errors.productDescription && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Текущие продажи</label>
+                    <textarea {...register('currentSales', { required: true, maxLength: 1000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Какая выручка за последний месяц/квартал/год" />
+                    <CharLimit limit={1000} field="currentSales" />
+                    {triedNext && errors.currentSales && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Технологическая масштабируемость</label>
-                    <textarea {...register('productUnique', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли какие либо технологические ограничения в проекте? Насколько технически возможно масштабирование?" />
-                    <CharLimit limit={2000} field="productUnique" />
-                    {triedNext && errors.productUnique && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Текущие пользователи</label>
+                    <textarea {...register('currentUsers', { required: true, maxLength: 1000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Какая динамика по пользователям за последний год (DAU/MAU)" />
+                    <CharLimit limit={1000} field="currentUsers" />
+                    {triedNext && errors.currentUsers && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Размер рынка</label>
-                    <textarea {...register('marketSize', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Приведите результаты вашего анализа рынка (TAM/SAM/SOM)" />
-                    <CharLimit limit={2000} field="marketSize" />
-                    {triedNext && errors.marketSize && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Запрашиваемая сумма инвестиций</label>
+                    <input type="text" {...register('investmentAmount', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Укажите сумму инвестиций" />
+                    {triedNext && errors.investmentAmount && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Конкуренция</label>
-                    <textarea {...register('competitors', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Приведите резултаты оценки уровня конкуренции в рынке" />
-                    <CharLimit limit={2000} field="competitors" />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Какой % компании вы готовы продать?</label>
+                    <input type="text" {...register('equityPercentage', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Укажите % компании, который вы готовы продать" />
+                    {triedNext && errors.equityPercentage && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Уникальное торговое предложение</label>
-                    <textarea {...register('uniqueSellingPoint', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите ваше уникальное торговое предложение" />
-                    <CharLimit limit={2000} field="uniqueSellingPoint" />
+                    <label className="block text-sm font-medium text-gray-700 mb-2">План использования инвестиций</label>
+                    <textarea {...register('investmentPlan', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Какой план использования привлекаемых инвестиций" />
+                    <CharLimit limit={2000} field="investmentPlan" />
+                    {triedNext && errors.investmentPlan && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Масштабируемость проекта (географическая)</label>
+                    <textarea {...register('geographicScalability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Какой потенциал географического роста" />
+                    <CharLimit limit={2000} field="geographicScalability" />
+                    {triedNext && errors.geographicScalability && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Unit-экономика</label>
+                    <textarea {...register('unitEconomics', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите и предоставьте расчеты по ключевым метрикам вашего проекта" />
+                    <CharLimit limit={2000} field="unitEconomics" />
+                    {triedNext && errors.unitEconomics && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Текущие инвестиции</label>
+                    <textarea {...register('currentInvestments', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите текущие инвестиции в проект" />
+                    <CharLimit limit={2000} field="currentInvestments" />
+                    {triedNext && errors.currentInvestments && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Структура капитала</label>
+                    <textarea {...register('capTable', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Распределение долей компании" />
+                    <CharLimit limit={2000} field="capTable" />
+                    {triedNext && errors.capTable && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Оценка компании</label>
+                    <textarea {...register('companyValuation', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="При наличии сторонней оценки компании" />
+                    <CharLimit limit={2000} field="companyValuation" />
+                    {triedNext && errors.companyValuation && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Комментарий к блоку "Финансы"</label>
+                    <textarea {...register('financeComment', { maxLength: 1000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={1000} placeholder="Любой комментарий к блоку 'Финансы'. Заполнение необязательно." />
+                    <CharLimit limit={1000} field="financeComment" />
                   </div>
                 </motion.div>
               )}
@@ -460,44 +532,33 @@ export default function StartupPage() {
                   data-step="5"
                 >
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Текущие продажи</label>
-                    <textarea {...register('traction', { required: true, maxLength: 1000 })} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Какая выручка за последний месяц/квартал/год" />
-                    <CharLimit limit={1000} field="traction" />
-                    {triedNext && errors.traction && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Рыночные риски</label>
+                    <textarea {...register('marketRisks', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Возможные рыночные риски: регуляции, конкуренция" />
+                    <CharLimit limit={2000} field="marketRisks" />
+                    {triedNext && errors.marketRisks && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Текущие пользователи</label>
-                    <textarea {...register('investment', { required: true, maxLength: 1000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Какая динамика по пользователям за последний год (DAU/MAU)" />
-                    <CharLimit limit={1000} field="investment" />
-                    {triedNext && errors.investment && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Операционные риски</label>
+                    <textarea {...register('operationalRisks', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Операционные риски: зависимость от персонала, информационных систем" />
+                    <CharLimit limit={2000} field="operationalRisks" />
+                    {triedNext && errors.operationalRisks && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Запрашиваемая сумма инвестиций</label>
-                    <input type="text" {...register('investmentPlan', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Укажите сумму инвестиций" />
-                    {triedNext && errors.investmentPlan && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Регистрация компании</label>
+                    <textarea {...register('companyRegistration', { required: true, maxLength: 1000 })} rows={2} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={1000} placeholder="Наименование юридического лица" />
+                    <CharLimit limit={1000} field="companyRegistration" />
+                    {triedNext && errors.companyRegistration && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Какой % компании вы готовы продать?</label>
-                    <input type="text" {...register('scalingForecast', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Укажите % компании, который вы готовы продать" />
-                    {triedNext && errors.scalingForecast && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Лицензии и регуляторное соответствие</label>
+                    <textarea {...register('licensesCompliance', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Требуется ли лицензия на деятельность, соответствует ли компания требованиям регуляторов?" />
+                    <CharLimit limit={2000} field="licensesCompliance" />
+                    {triedNext && errors.licensesCompliance && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">План использования инвестиций</label>
-                    <textarea {...register('currentInvestments', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Какой план использования привлекаемых инвестиций" />
-                    <CharLimit limit={2000} field="currentInvestments" />
-                    {triedNext && errors.currentInvestments && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Масштабируемость проекта (географическая)</label>
-                    <textarea {...register('scalability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Какой потенциал географического роста" />
-                    <CharLimit limit={2000} field="scalability" />
-                    {triedNext && errors.capTable && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Unit-экономика</label>
-                    <textarea {...register('unitEconomics', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите и предоставьте расчеты по ключевым метрикам вашего проекта" />
-                    <CharLimit limit={2000} field="unitEconomics" />
-                    {triedNext && errors.capTable && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Комментарий к блоку "Риски"</label>
+                    <textarea {...register('risksComment', { maxLength: 1000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={1000} placeholder="Любой комментарий к блоку 'Риски'. Заполнение необязательно." />
+                    <CharLimit limit={1000} field="risksComment" />
                   </div>
                 </motion.div>
               )}
@@ -510,66 +571,27 @@ export default function StartupPage() {
                   data-step="6"
                 >
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Рыночные риски</label>
-                    <textarea {...register('companyRegistration', { required: true, maxLength: 1000 })} rows={6} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" placeholder="Возможные рыночные риски: регуляции, конкуренция" />
-                    <CharLimit limit={1000} field="companyRegistration" />
-                    {triedNext && errors.companyRegistration && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Что ограничивает компанию от роста до «единорога»</label>
+                    <textarea {...register('growthLimitations', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Опишите основные ограничения и препятствия для роста вашей компании" onFocus={() => setFocusedField('growthLimitations')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={3000} field="growthLimitations" />
+                    {triedNext && errors.growthLimitations && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Операционные риски</label>
-                    <textarea {...register('contracts', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Операционные риски: зависимость от персонала, информационных систем" />
-                    <CharLimit limit={2000} field="contracts" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Регистрация компании</label>
-                    <textarea {...register('noDisputes', { required: true, maxLength: 1000 })} rows={2} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={1000} placeholder="Зарегестрирована ли компания?" />
-                    <CharLimit limit={1000} field="noDisputes" />
-                    {triedNext && errors.noDisputes && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Договорная база</label>
-                    <textarea {...register('licenses', { maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли договорная база и её состояние" />
-                    <CharLimit limit={2000} field="licenses" />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Судебные споры</label>
-                    <textarea {...register('ipClean', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Наличие судебных споров" />
-                    <CharLimit limit={2000} field="ipClean" />
-                    {triedNext && errors.ipClean && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Лицензии и регуляторное соответствие</label>
-                    <textarea {...register('risks', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Требуется ли лицензия на деятельность, соответствует ли компания требованиям регуляторов?" />
-                    <CharLimit limit={2000} field="risks" />
-                    {triedNext && errors.risks && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
-                  </div>
-                </motion.div>
-              )}
-              {step === 7 && (
-                <motion.div 
-                  initial={{ opacity: 0, x: 20 }} 
-                  animate={{ opacity: 1, x: 0 }} 
-                  transition={{ duration: 0.5 }} 
-                  className="space-y-6"
-                  data-step="7"
-                >
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Контактное лицо</label>
-                    <input type="text" {...register('contactName', { required: true })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('contactName')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={100} field="contactName" />
-                    <div className="min-h-[22px]">{triedNext && errors.contactName && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}</div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    <input type="email" {...register('email', { required: true, pattern: /^\S+@\S+$/i })} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('email')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={100} field="email" />
-                    <div className="min-h-[22px]">{triedNext && errors.email && <p className="mt-1 text-sm text-red-600">Введите корректный email</p>}</div>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Контактный телефон</label>
-                    <input type="tel" {...register('phone')} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" onFocus={() => setFocusedField('phone')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={30} field="phone" />
-                    <div className="min-h-[22px]">&nbsp;</div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">Приложить файлы</label>
+                    <div className="text-sm text-gray-600 mb-3">
+                      Приложите сопутствующие документы для анализа. Например, презентации по проекту, проведенные вами анализы рынка или конкурентов.
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Дополнительные документы</label>
+                        <input 
+                          type="file" 
+                          accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx"
+                          onChange={(e) => setDocs(e.target.files?.[0] || null)}
+                          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                        />
+                      </div>
+                    </div>
                   </div>
                 </motion.div>
               )}
@@ -577,7 +599,7 @@ export default function StartupPage() {
                 {step > 1 && (
                   <button type="button" onClick={() => goToStep(step - 1)} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">Назад</button>
                 )}
-                {step < 7 ? (
+                {step < 6 ? (
                   <button type="button" onClick={() => goToStep(step + 1)} className="ml-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Далее</button>
                 ) : (
                   <button type="submit" className="ml-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Отправить заявку</button>
