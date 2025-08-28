@@ -57,12 +57,11 @@ async function sendEmailNotification(data: any, folderUrl: string) {
       html: `
         <h2>Новая заявка от стартапа</h2>
         <p><strong>Название компании:</strong> ${data.companyName}</p>
-        <p><strong>Имя контактного лица:</strong> ${data.contactName}</p>
-        <p><strong>Email:</strong> ${data.email}</p>
+        <p><strong>Контактное лицо:</strong> ${data.contactName}</p>
+        <p><strong>Email:</strong> ${data.email || 'Не указан'}</p>
         <p><strong>Телефон:</strong> ${data.phone}</p>
-        <p><strong>Описание проекта:</strong> ${data.description}</p>
-        <p><strong>Стадия проекта:</strong> ${data.stage}</p>
-        <p><strong>Сумма инвестиций:</strong> ${data.investmentAmount}</p>
+        <p><strong>Запрашиваемая сумма инвестиций:</strong> ${data.investmentAmount}</p>
+        <p><strong>Процент компании:</strong> ${data.equityPercentage}</p>
         <p><a href="${folderUrl}">Скачать все файлы</a></p>
       `,
     }
@@ -99,49 +98,54 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
 
     // Подготовка данных для записи
     const formData = {
-      // Основная информация
+      // Интро
       submissionDate: new Date().toISOString(),
       companyName: data.companyName,
-      industry: data.industry,
       contactName: data.contactName,
       email: data.email,
       phone: data.phone,
-      description: data.description,
       
       // Команда
       teamExperience: data.teamExperience,
       teamMembers: data.teamMembers,
-      teamJointExp: data.teamJointExp,
-      vision: data.vision,
-      investorExp: data.investorExp,
+      teamComment: data.teamComment,
       
-      // Технологии
-      techNovelty: data.techNovelty,
-      rndInfra: data.rndInfra,
-      scalability: data.scalability,
-      
-      // Продукт и рынок
-      productDesc: data.productDesc,
-      productUnique: data.productUnique,
+      // Продукт и технологии
+      productDescription: data.productDescription,
+      productAvailability: data.productAvailability,
+      productAudience: data.productAudience,
+      uniqueSellingPoint: data.uniqueSellingPoint,
+      productUniqueness: data.productUniqueness,
+      researchAvailability: data.researchAvailability,
+      techScalability: data.techScalability,
       marketSize: data.marketSize,
-      competAdv: data.competAdv,
-      pitchDeckBase64,
+      productTechComment: data.productTechComment,
       
-      // Финансы и рост
-      traction: data.traction,
-      investment: data.investment,
+      // Финансы
+      currentSales: data.currentSales,
+      currentUsers: data.currentUsers,
+      investmentAmount: data.investmentAmount,
+      equityPercentage: data.equityPercentage,
       investmentPlan: data.investmentPlan,
-      scalingForecast: data.scalingForecast,
+      geographicScalability: data.geographicScalability,
+      unitEconomics: data.unitEconomics,
       currentInvestments: data.currentInvestments,
       capTable: data.capTable,
+      companyValuation: data.companyValuation,
+      financeComment: data.financeComment,
       
-      // Юридические аспекты и риски
-      registration: data.registration,
-      contracts: data.contracts,
-      noDisputes: data.noDisputes,
-      licenses: data.licenses,
-      ipClean: data.ipClean,
-      risks: data.risks,
+      // Риски
+      marketRisks: data.marketRisks,
+      operationalRisks: data.operationalRisks,
+      companyRegistration: data.companyRegistration,
+      licensesCompliance: data.licensesCompliance,
+      risksComment: data.risksComment,
+      
+      // Завершение
+      growthLimitations: data.growthLimitations,
+      
+      // Файлы
+      pitchDeckBase64,
       docsBase64,
       
       // ID заявки
