@@ -22,15 +22,13 @@ export async function POST(request: Request) {
     console.log('Form data received:', Object.fromEntries(formData.entries()))
     
     const data = Object.fromEntries(formData.entries())
-    const pitchDeck = formData.get('pitchDeck') as File | null
     const docs = formData.get('docs') as File | null
 
     console.log('Files received:', {
-      pitchDeck: pitchDeck ? `File: ${pitchDeck.name}, Size: ${pitchDeck.size}` : 'No pitch deck',
       docs: docs ? `File: ${docs.name}, Size: ${docs.size}` : 'No docs'
     })
 
-    const result = await submitStartupApplication(data, pitchDeck, docs)
+    const result = await submitStartupApplication(data, docs)
     console.log('Application submitted successfully:', result)
 
     return NextResponse.json(result)

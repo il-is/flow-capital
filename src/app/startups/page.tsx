@@ -112,7 +112,6 @@ export default function StartupPage() {
       growthLimitations: ''
     }
   })
-  const [pitchDeck, setPitchDeck] = useState<File | null>(null)
   const [docs, setDocs] = useState<File | null>(null)
   const [showInfo, setShowInfo] = useState<string | null>(null)
   const [focusedField, setFocusedField] = useState<string | null>(null)
@@ -145,7 +144,6 @@ export default function StartupPage() {
       data.submissionDate = new Date().toISOString()
       const formData = new FormData()
       Object.entries(data).forEach(([key, value]) => formData.append(key, value as string))
-      if (pitchDeck) formData.append('pitchDeck', pitchDeck)
       if (docs) formData.append('docs', docs)
 
       const response = await fetch('/api/startup', {

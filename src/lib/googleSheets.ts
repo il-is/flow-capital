@@ -12,24 +12,17 @@ async function fileToBase64(file: File): Promise<string> {
 }
 
 // Функция для сохранения файлов
-async function saveFiles(pitchDeck: File | null, docs: File | null, submissionId: string) {
+async function saveFiles(docs: File | null, submissionId: string) {
   try {
     const uploadsDir = path.join(process.cwd(), 'public', 'uploads')
     const filePaths = {
-      pitchDeck: null as string | null,
       docs: null as string | null
     }
 
-    if (pitchDeck) {
-      const pitchDeckPath = path.join(uploadsDir, `${submissionId}_pitch_deck.pdf`)
-      await writeFile(pitchDeckPath, Buffer.from(await pitchDeck.arrayBuffer()))
-      filePaths.pitchDeck = `/uploads/${submissionId}_pitch_deck.pdf`
-    }
-
     if (docs) {
-      const docsPath = path.join(uploadsDir, `${submissionId}_docs.pdf`)
+      const docsPath = path.join(uploadsDir, `${submissionId}_docs.${getFileExtension(docs.name)}`)
       await writeFile(docsPath, Buffer.from(await docs.arrayBuffer()))
-      filePaths.docs = `/uploads/${submissionId}_docs.pdf`
+      filePaths.docs = `/uploads/${submissionId}_docs.${getFileExtension(docs.name)}`
     }
 
     return filePaths
@@ -39,16 +32,32 @@ async function saveFiles(pitchDeck: File | null, docs: File | null, submissionId
   }
 }
 
+// Функция для получения расширения файла
+function getFileExtension(filename: string): string {
+  return filename.split('.').pop() || 'bin'
+}
+
 // Функция для отправки email
 async function sendEmailNotification(data: any, folderUrl: string) {
   try {
+    console.log('Setting up email transporter...')
+    console.log('EMAIL_USER:', process.env.EMAIL_USER)
+    console.log('EMAIL_PASSWORD:', process.env.EMAIL_PASSWORD ? 'Set' : 'Not set')
+    
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         user: process.env.EMAIL_USER,
         pass: process.env.EMAIL_PASSWORD,
       },
+      secure: true,
+      port: 465,
     })
+
+    // Проверяем соединение
+    console.log('Verifying email connection...')
+    await transporter.verify()
+    console.log('Email connection verified successfully')
 
     const mailOptions = {
       from: process.env.EMAIL_USER,
@@ -62,19 +71,29 @@ async function sendEmailNotification(data: any, folderUrl: string) {
         <p><strong>Телефон:</strong> ${data.phone}</p>
         <p><strong>Запрашиваемая сумма инвестиций:</strong> ${data.investmentAmount}</p>
         <p><strong>Процент компании:</strong> ${data.equityPercentage}</p>
-        <p><a href="${folderUrl}">Скачать все файлы</a></p>
+        <p><a href="${folderUrl}">Скачать приложенные файлы</a></p>
       `,
     }
 
-    await transporter.sendMail(mailOptions)
+    console.log('Sending email...')
+    const result = await transporter.sendMail(mailOptions)
+    console.log('Email sent successfully:', result.messageId)
+    
+    return result
   } catch (error) {
-    console.error('Error sending email:', error)
+    console.error('Detailed error sending email:', error)
+    if (error && typeof error === 'object' && 'code' in error) {
+      console.error('Error code:', (error as any).code)
+    }
+    if (error && typeof error === 'object' && 'message' in error) {
+      console.error('Error message:', (error as any).message)
+    }
     throw error
   }
 }
 
 // Функция для сохранения заявки через Google Apps Script
-export async function submitStartupApplication(data: any, pitchDeck: File | null, docs: File | null) {
+export async function submitStartupApplication(data: any, docs: File | null) {
   try {
     console.log('Starting submission process...')
     console.log('GOOGLE_SCRIPT_URL:', GOOGLE_SCRIPT_URL)
@@ -83,13 +102,7 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
     console.log('Generated submissionId:', submissionId)
 
     // Конвертируем файлы в base64
-    let pitchDeckBase64 = null
     let docsBase64 = null
-
-    if (pitchDeck) {
-      console.log('Converting pitch deck to base64...')
-      pitchDeckBase64 = await fileToBase64(pitchDeck)
-    }
 
     if (docs) {
       console.log('Converting docs to base64...')
@@ -145,7 +158,6 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
       growthLimitations: data.growthLimitations,
       
       // Файлы
-      pitchDeckBase64,
       docsBase64,
       
       // ID заявки
@@ -179,8 +191,13 @@ export async function submitStartupApplication(data: any, pitchDeck: File | null
 
     console.log('Sending email notification...')
     // Отправка уведомления на email
-    await sendEmailNotification(data, responseData.folderUrl)
-    console.log('Email notification sent')
+    try {
+      const emailResult = await sendEmailNotification(data, responseData.folderUrl)
+      console.log('Email notification sent successfully:', emailResult.messageId)
+    } catch (emailError) {
+      console.error('Failed to send email notification:', emailError)
+      // Не прерываем выполнение, если email не отправился
+    }
 
     return { success: true, submissionId, folderUrl: responseData.folderUrl }
   } catch (error) {
