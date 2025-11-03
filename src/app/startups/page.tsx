@@ -207,32 +207,53 @@ export default function StartupPage() {
         if (sectionFields.length > 0) {
           const valid = await trigger(sectionFields);
           if (!valid) {
-            // Если валидация не прошла, находим незаполненные поля
+            // Если валидация не прошла, находим все поля с ошибками
             const sectionName = getSectionTitles()[i - 1] || `Секция ${i}`;
             const values = getValues();
-            const emptyFields = sectionFields.filter(field => {
+            const currentErrors = errors;
+            
+            // Находим все поля с ошибками валидации
+            const fieldsWithErrors = sectionFields.filter(field => {
+              const error = currentErrors[field];
+              if (error) return true;
+              
+              // Также проверяем пустые обязательные поля
               const value = values[field];
-              return !value || (typeof value === 'string' && value.trim() === '');
+              if (!value || (typeof value === 'string' && value.trim() === '')) {
+                return true;
+              }
+              
+              return false;
             });
             
-            // Формируем список незаполненных полей
-            let errorMessage = `Пожалуйста, заполните все обязательные поля в блоке "${sectionName}":\n`;
+            // Формируем список полей с ошибками
+            let errorMessage = `Пожалуйста, исправьте ошибки в блоке "${sectionName}":\n`;
             
             // Получаем названия полей из конфигурации или используем ключи
             if (formConfig) {
               const sectionFieldsConfig = getFieldsForSection(formConfig, sectionName);
-              emptyFields.forEach(fieldKey => {
+              fieldsWithErrors.forEach(fieldKey => {
                 const fieldConfig = sectionFieldsConfig.find(f => 
                   getFieldKeyFromQuestion(f.question) === fieldKey
                 );
                 if (fieldConfig) {
-                  errorMessage += `• ${fieldConfig.question}\n`;
+                  const error = currentErrors[fieldKey];
+                  if (error?.message) {
+                    errorMessage += `• ${fieldConfig.question}: ${error.message}\n`;
+                  } else {
+                    errorMessage += `• ${fieldConfig.question} (не заполнено)\n`;
+                  }
                 }
               });
             } else {
               // Fallback: используем ключи полей
-              emptyFields.forEach(fieldKey => {
-                errorMessage += `• ${String(fieldKey)}\n`;
+              fieldsWithErrors.forEach(fieldKey => {
+                const error = currentErrors[fieldKey];
+                if (error?.message) {
+                  errorMessage += `• ${String(fieldKey)}: ${error.message}\n`;
+                } else {
+                  errorMessage += `• ${String(fieldKey)} (не заполнено)\n`;
+                }
               });
             }
             
@@ -282,20 +303,28 @@ export default function StartupPage() {
   };
 
   // Получение полей секции на основе конфигурации или дефолтной структуры
+  // Включает обязательные поля + поля с валидацией формата (email, phone)
   function getSectionFields(section: number): (keyof FormData)[] {
     if (formConfig && formConfig.sections.length >= section) {
       const sectionName = formConfig.sections[section - 1]
       const fields = getFieldsForSection(formConfig, sectionName)
-      // Получаем только обязательные поля для валидации перехода
+      // Получаем обязательные поля + поля с валидацией формата (email, phone)
       return fields
-        .filter(field => field.required)
+        .filter(field => {
+          if (field.required) return true;
+          // Включаем email и phone даже если они необязательные, т.к. у них есть валидация формата
+          const fieldKey = getFieldKeyFromQuestion(field.question);
+          const isEmail = field.fieldType === 'email' || field.question.toLowerCase().includes('email');
+          const isPhone = field.fieldType === 'tel' || field.question.toLowerCase().includes('телефон') || field.question.toLowerCase().includes('phone');
+          return isEmail || isPhone;
+        })
         .map(field => getFieldKeyFromQuestion(field.question) as keyof FormData)
     }
     
-    // Fallback к дефолтной структуре
+    // Fallback к дефолтной структуре (включаем email для проверки формата)
     switch (section) {
       case 1:
-        return ['companyName', 'contactName', 'phone']
+        return ['companyName', 'contactName', 'email', 'phone']
       case 2:
         return ['teamExperience', 'teamMembers']
       case 3:
@@ -626,7 +655,9 @@ export default function StartupPage() {
                                 {fieldConfig.maxLength && <CharLimit limit={fieldConfig.maxLength} field={fieldKey} />}
                                 <div className="min-h-[22px]">
                                   {triedNext && errors[fieldKey] && (
-                                    <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>
+                                    <p className="mt-1 text-sm text-red-600">
+                                      {errors[fieldKey]?.message || 'Это поле обязательно'}
+                                    </p>
                                   )}
                                 </div>
                               </>
@@ -638,19 +669,31 @@ export default function StartupPage() {
                                     required: fieldConfig.required,
                                     maxLength: fieldConfig.maxLength,
                                     ...(isEmail && {
-                                      pattern: {
-                                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                        message: 'Введите корректный email адрес'
+                                      validate: (value) => {
+                                        if (!fieldConfig.required && !value) return true;
+                                        if (value && !/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                                          return 'Введите корректный email адрес';
+                                        }
+                                        return true;
                                       }
                                     }),
                                     ...(isPhone && {
                                       pattern: {
                                         value: /^[0-9+\s()-]*$/,
                                         message: 'Телефон может содержать только цифры и символы +, -, (, ), пробелы'
+                                      },
+                                      validate: (value) => {
+                                        if (!fieldConfig.required && !value) return true;
+                                        if (value && value.trim().length < 5) {
+                                          return 'Телефон слишком короткий';
+                                        }
+                                        return true;
                                       }
                                     })
                                   })} 
-                                  className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" 
+                                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black ${
+                                    triedNext && errors[fieldKey] ? 'border-red-500' : ''
+                                  }`}
                                   placeholder={fieldConfig.placeholder || ''}
                                   onFocus={() => setFocusedField(fieldKey as string)} 
                                   onBlur={() => setFocusedField(null)}
@@ -699,12 +742,17 @@ export default function StartupPage() {
                           <input 
                             type="email" 
                             {...register('email', {
-                              pattern: {
-                                value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
-                                message: 'Введите корректный email адрес'
+                              validate: (value) => {
+                                if (!value) return true; // Необязательное поле
+                                if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i.test(value)) {
+                                  return 'Введите корректный email адрес';
+                                }
+                                return true;
                               }
                             })} 
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" 
+                            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black ${
+                              triedNext && errors.email ? 'border-red-500' : ''
+                            }`}
                             onFocus={() => setFocusedField('email')} 
                             onBlur={() => setFocusedField(null)} 
                           />
@@ -726,9 +774,17 @@ export default function StartupPage() {
                               pattern: {
                                 value: /^[0-9+\s()-]*$/,
                                 message: 'Телефон может содержать только цифры и символы +, -, (, ), пробелы'
+                              },
+                              validate: (value) => {
+                                if (!value || value.trim().length < 5) {
+                                  return 'Телефон слишком короткий';
+                                }
+                                return true;
                               }
                             })} 
-                            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" 
+                            className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black ${
+                              triedNext && errors.phone ? 'border-red-500' : ''
+                            }`}
                             onFocus={() => setFocusedField('phone')} 
                             onBlur={() => setFocusedField(null)}
                             onInput={(e) => {
