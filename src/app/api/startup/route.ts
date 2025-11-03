@@ -19,17 +19,26 @@ export async function POST(request: Request) {
     }
 
     const formData = await request.formData()
-    console.log('Form data received:', Object.fromEntries(formData.entries()))
     
-    const data = Object.fromEntries(formData.entries())
+    // Извлекаем текстовые данные
+    const data: any = {}
+    const textEntries = Array.from(formData.entries()).filter(([key, value]) => {
+      if (value instanceof File) return false
+      data[key] = value
+      return true
+    })
+    
+    console.log('Form data received:', Object.keys(data))
+    
+    // Извлекаем файлы
     const docs = formData.get('docs') as File | null
     const teamResume = formData.get('teamResume') as File | null
     const financialModel = formData.get('financialModel') as File | null
 
     console.log('Files received:', {
-      docs: docs ? `File: ${docs.name}, Size: ${docs.size}` : 'No docs',
-      teamResume: teamResume ? `File: ${teamResume.name}, Size: ${teamResume.size}` : 'No teamResume',
-      financialModel: financialModel ? `File: ${financialModel.name}, Size: ${financialModel.size}` : 'No financialModel'
+      docs: docs ? `File: ${docs.name}, Size: ${docs.size} bytes, Type: ${docs.type}` : 'No docs',
+      teamResume: teamResume ? `File: ${teamResume.name}, Size: ${teamResume.size} bytes, Type: ${teamResume.type}` : 'No teamResume',
+      financialModel: financialModel ? `File: ${financialModel.name}, Size: ${financialModel.size} bytes, Type: ${financialModel.type}` : 'No financialModel'
     })
 
     const result = await submitStartupApplication(data, docs, teamResume, financialModel)

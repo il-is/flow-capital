@@ -26,9 +26,14 @@ function doGet(e) {
  */
 function doPost(e) {
   try {
+    console.log('Received POST request');
+    console.log('PostData contents length:', e.postData ? e.postData.contents.length : 0);
+    
     // Парсим данные
     const data = JSON.parse(e.postData.contents);
-    console.log('Received data:', Object.keys(data));
+    console.log('Parsed data keys:', Object.keys(data));
+    console.log('Submission ID:', data.submissionId);
+    console.log('Company name:', data.companyName);
     
     // Создаем папку для этой заявки в Google Drive
     const submissionId = data.submissionId || Date.now().toString();
@@ -38,26 +43,57 @@ function doPost(e) {
     
     // Сохраняем файлы в папку
     const fileUrls = {};
+    
+    console.log('Files data check:', {
+      hasDocsBase64: !!data.docsBase64,
+      docsBase64Length: data.docsBase64 ? data.docsBase64.length : 0,
+      hasDocsFileName: !!data.docsFileName,
+      hasTeamResumeBase64: !!data.teamResumeBase64,
+      teamResumeBase64Length: data.teamResumeBase64 ? data.teamResumeBase64.length : 0,
+      hasTeamResumeFileName: !!data.teamResumeFileName,
+      hasFinancialModelBase64: !!data.financialModelBase64,
+      financialModelBase64Length: data.financialModelBase64 ? data.financialModelBase64.length : 0,
+      hasFinancialModelFileName: !!data.financialModelFileName
+    });
+    
     if (data.docsBase64) {
+      // Используем оригинальное имя файла или генерируем
+      const fileName = data.docsFileName 
+        ? `Дополнительные_документы_${submissionId}_${data.docsFileName}`
+        : `Дополнительные_документы_${submissionId}`;
+      console.log('Saving docs file:', fileName);
       fileUrls.docs = saveFileToDrive(
         folder,
-        `Дополнительные_документы_${submissionId}`,
+        fileName,
         data.docsBase64
       );
+      console.log('Docs file URL:', fileUrls.docs);
     }
     if (data.teamResumeBase64) {
+      // Используем оригинальное имя файла или генерируем
+      const fileName = data.teamResumeFileName 
+        ? `Резюме_команды_${submissionId}_${data.teamResumeFileName}`
+        : `Резюме_команды_${submissionId}`;
+      console.log('Saving teamResume file:', fileName);
       fileUrls.teamResume = saveFileToDrive(
         folder,
-        `Резюме_команды_${submissionId}`,
+        fileName,
         data.teamResumeBase64
       );
+      console.log('TeamResume file URL:', fileUrls.teamResume);
     }
     if (data.financialModelBase64) {
+      // Используем оригинальное имя файла или генерируем
+      const fileName = data.financialModelFileName 
+        ? `Финансовая_модель_${submissionId}_${data.financialModelFileName}`
+        : `Финансовая_модель_${submissionId}`;
+      console.log('Saving financialModel file:', fileName);
       fileUrls.financialModel = saveFileToDrive(
         folder,
-        `Финансовая_модель_${submissionId}`,
+        fileName,
         data.financialModelBase64
       );
+      console.log('FinancialModel file URL:', fileUrls.financialModel);
     }
     
     // Записываем данные в Google Таблицу
@@ -230,25 +266,56 @@ function createSubmissionFolder(folderName) {
  */
 function saveFileToDrive(folder, fileName, base64Data) {
   try {
-    // Пытаемся определить тип файла по содержимому
-    let mimeType = detectMimeTypeFromBase64(base64Data);
+    console.log('Saving file to Drive:', fileName);
+    
+    // Проверяем, что base64 данные не пустые
+    if (!base64Data || typeof base64Data !== 'string' || base64Data.length === 0) {
+      console.error('Base64 data is empty or invalid for file:', fileName);
+      return '';
+    }
+    
+    console.log('Base64 data length:', base64Data.length);
+    
+    // Пытаемся определить тип файла по содержимому и имени файла
+    let mimeType = detectMimeTypeFromBase64(base64Data, fileName);
     
     // Если не удалось определить, пробуем по имени файла
     if (!mimeType) {
       const fileExtension = getFileExtensionFromName(fileName);
       mimeType = getMimeTypeByExtension(fileExtension);
+      console.log('MIME type from extension:', mimeType, 'extension:', fileExtension);
+    } else {
+      console.log('MIME type from detection:', mimeType);
+    }
+    
+    // Декодируем base64 данные
+    let decodedData;
+    try {
+      decodedData = Utilities.base64Decode(base64Data);
+      console.log('Decoded data size:', decodedData.length, 'bytes');
+      
+      if (!decodedData || decodedData.length === 0) {
+        console.error('Decoded data is empty for file:', fileName);
+        return '';
+      }
+    } catch (decodeError) {
+      console.error('Error decoding base64:', decodeError);
+      return '';
     }
     
     const blob = Utilities.newBlob(
-      Utilities.base64Decode(base64Data),
+      decodedData,
       mimeType || 'application/octet-stream',
       fileName
     );
     
     const file = folder.createFile(blob);
+    console.log('File created successfully:', file.getName(), file.getUrl(), 'Size:', file.getSize(), 'bytes');
     return file.getUrl();
   } catch (error) {
     console.error('Error saving file to Drive:', error);
+    console.error('Error details:', error.toString());
+    console.error('Error stack:', error.stack);
     return '';
   }
 }
@@ -256,7 +323,7 @@ function saveFileToDrive(folder, fileName, base64Data) {
 /**
  * Определяет MIME тип по содержимому base64
  */
-function detectMimeTypeFromBase64(base64Data) {
+function detectMimeTypeFromBase64(base64Data, fileName) {
   try {
     const bytes = Utilities.base64Decode(base64Data.substring(0, 100));
     
@@ -267,23 +334,40 @@ function detectMimeTypeFromBase64(base64Data) {
     
     // ZIP-based formats (DOCX, XLSX, PPTX)
     if (bytes[0] === 0x50 && bytes[1] === 0x4B && bytes[2] === 0x03 && bytes[3] === 0x04) {
-      // Нужно проверить внутреннюю структуру для точного определения
-      // По умолчанию возвращаем XLSX, т.к. чаще всего это Excel файлы
+      // Для ZIP-архивов проверяем расширение файла, т.к. содержимое одинаковое
+      if (fileName) {
+        const extension = fileName.split('.').pop().toLowerCase();
+        if (extension === 'docx') {
+          return 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        } else if (extension === 'xlsx' || extension === 'xlsm') {
+          return extension === 'xlsm' 
+            ? 'application/vnd.ms-excel.sheet.macroEnabled.12'
+            : 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        } else if (extension === 'pptx') {
+          return 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+        }
+      }
+      // По умолчанию возвращаем XLSX, если расширение не определено
       return 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
     
     // DOC (старый формат Word)
     if (bytes[0] === 0xD0 && bytes[1] === 0xCF && bytes[2] === 0x11 && bytes[3] === 0xE0) {
-      return 'application/msword';
-    }
-    
-    // XLS (старый формат Excel)
-    if (bytes[0] === 0xD0 && bytes[1] === 0xCF && bytes[2] === 0x11 && bytes[3] === 0xE0) {
-      return 'application/vnd.ms-excel';
+      // Проверяем расширение для точного определения
+      if (fileName) {
+        const extension = fileName.split('.').pop().toLowerCase();
+        if (extension === 'doc') {
+          return 'application/msword';
+        } else if (extension === 'xls') {
+          return 'application/vnd.ms-excel';
+        }
+      }
+      return 'application/msword'; // По умолчанию DOC
     }
     
     return null;
   } catch (error) {
+    console.error('Error detecting MIME type:', error);
     return null;
   }
 }

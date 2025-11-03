@@ -313,7 +313,6 @@ export default function StartupPage() {
         .filter(field => {
           if (field.required) return true;
           // Включаем email и phone даже если они необязательные, т.к. у них есть валидация формата
-          const fieldKey = getFieldKeyFromQuestion(field.question);
           const isEmail = field.fieldType === 'email' || field.question.toLowerCase().includes('email');
           const isPhone = field.fieldType === 'tel' || field.question.toLowerCase().includes('телефон') || field.question.toLowerCase().includes('phone');
           return isEmail || isPhone;
@@ -551,7 +550,7 @@ export default function StartupPage() {
                 {!configError && formConfig && (
                   <div className="mb-4 p-2 bg-green-50 border border-green-200 rounded-lg">
                     <p className="text-xs text-green-700">
-                      ✅ Конфигурация загружена из Google Sheets ({formConfig.sections.length} секций, {formConfig.fields.length} полей)
+                      ✅ Конфигурация загружена ({formConfig.sections.length} секций, {formConfig.fields.length} полей)
                     </p>
                   </div>
                 )}

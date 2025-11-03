@@ -101,24 +101,33 @@ export async function submitStartupApplication(data: any, docs: File | null, tea
     const submissionId = Date.now().toString()
     console.log('Generated submissionId:', submissionId)
 
-    // Конвертируем файлы в base64
+    // Конвертируем файлы в base64 и сохраняем оригинальные имена
     let docsBase64 = null
+    let docsFileName = null
     let teamResumeBase64 = null
+    let teamResumeFileName = null
     let financialModelBase64 = null
+    let financialModelFileName = null
 
     if (docs) {
-      console.log('Converting docs to base64...')
+      console.log('Converting docs to base64...', docs.name, docs.size, 'bytes, type:', docs.type)
       docsBase64 = await fileToBase64(docs)
+      docsFileName = docs.name
+      console.log('Docs base64 length:', docsBase64 ? docsBase64.length : 0, 'characters')
     }
 
     if (teamResume) {
-      console.log('Converting teamResume to base64...')
+      console.log('Converting teamResume to base64...', teamResume.name, teamResume.size, 'bytes, type:', teamResume.type)
       teamResumeBase64 = await fileToBase64(teamResume)
+      teamResumeFileName = teamResume.name
+      console.log('TeamResume base64 length:', teamResumeBase64 ? teamResumeBase64.length : 0, 'characters')
     }
 
     if (financialModel) {
-      console.log('Converting financialModel to base64...')
+      console.log('Converting financialModel to base64...', financialModel.name, financialModel.size, 'bytes, type:', financialModel.type)
       financialModelBase64 = await fileToBase64(financialModel)
+      financialModelFileName = financialModel.name
+      console.log('FinancialModel base64 length:', financialModelBase64 ? financialModelBase64.length : 0, 'characters')
     }
 
     // Подготовка данных для записи (актуализировано согласно CSV)
@@ -166,8 +175,11 @@ export async function submitStartupApplication(data: any, docs: File | null, tea
       
       // Файлы (в base64 для отправки в Google Apps Script)
       docsBase64,                    // Дополнительные документы (шаг 6)
+      docsFileName,                  // Оригинальное имя файла
       teamResumeBase64,              // Резюме команды (шаг 2)
+      teamResumeFileName,            // Оригинальное имя файла
       financialModelBase64,          // Финансовая модель (шаг 4)
+      financialModelFileName,        // Оригинальное имя файла
       
       // ID заявки
       submissionId
