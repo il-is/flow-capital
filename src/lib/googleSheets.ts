@@ -186,11 +186,33 @@ export async function submitStartupApplication(data: any, docs: File | null, tea
     }
 
     console.log('Sending data to Google Apps Script...')
+    console.log('FormData summary:', {
+      hasDocsBase64: !!formData.docsBase64,
+      docsBase64Length: formData.docsBase64 ? formData.docsBase64.length : 0,
+      hasTeamResumeBase64: !!formData.teamResumeBase64,
+      teamResumeBase64Length: formData.teamResumeBase64 ? formData.teamResumeBase64.length : 0,
+      hasFinancialModelBase64: !!formData.financialModelBase64,
+      financialModelBase64Length: formData.financialModelBase64 ? formData.financialModelBase64.length : 0,
+      totalFields: Object.keys(formData).length
+    })
 
     // Отправка данных в Google Apps Script
+    // ВАЖНО: Google Apps Script doPost имеет ограничение ~6MB на размер данных
+    const jsonPayload = JSON.stringify(formData)
+    const payloadSizeMB = jsonPayload.length / (1024 * 1024)
+    console.log('JSON payload size:', payloadSizeMB.toFixed(2), 'MB (', jsonPayload.length, 'characters)')
+    
+    if (payloadSizeMB > 5.5) {
+      console.warn('⚠️ WARNING: Payload size exceeds 5.5MB, may fail to process:', {
+        docsSize: formData.docsBase64 ? (formData.docsBase64.length / (1024 * 1024)).toFixed(2) + ' MB' : 'none',
+        teamResumeSize: formData.teamResumeBase64 ? (formData.teamResumeBase64.length / (1024 * 1024)).toFixed(2) + ' MB' : 'none',
+        financialModelSize: formData.financialModelBase64 ? (formData.financialModelBase64.length / (1024 * 1024)).toFixed(2) + ' MB' : 'none'
+      })
+    }
+    
     const response = await fetch(GOOGLE_SCRIPT_URL!, {
       method: 'POST',
-      body: JSON.stringify(formData),
+      body: jsonPayload,
       headers: {
         'Content-Type': 'application/json',
       },

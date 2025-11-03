@@ -44,17 +44,27 @@ function doPost(e) {
     // Сохраняем файлы в папку
     const fileUrls = {};
     
+    // Проверяем наличие всех данных о файлах
     console.log('Files data check:', {
       hasDocsBase64: !!data.docsBase64,
+      docsBase64Type: typeof data.docsBase64,
       docsBase64Length: data.docsBase64 ? data.docsBase64.length : 0,
       hasDocsFileName: !!data.docsFileName,
+      docsFileName: data.docsFileName || 'none',
       hasTeamResumeBase64: !!data.teamResumeBase64,
+      teamResumeBase64Type: typeof data.teamResumeBase64,
       teamResumeBase64Length: data.teamResumeBase64 ? data.teamResumeBase64.length : 0,
       hasTeamResumeFileName: !!data.teamResumeFileName,
+      teamResumeFileName: data.teamResumeFileName || 'none',
       hasFinancialModelBase64: !!data.financialModelBase64,
+      financialModelBase64Type: typeof data.financialModelBase64,
       financialModelBase64Length: data.financialModelBase64 ? data.financialModelBase64.length : 0,
-      hasFinancialModelFileName: !!data.financialModelFileName
+      hasFinancialModelFileName: !!data.financialModelFileName,
+      financialModelFileName: data.financialModelFileName || 'none'
     });
+    
+    // Проверяем все ключи данных
+    console.log('All data keys:', Object.keys(data).filter(key => key.includes('Base64') || key.includes('FileName')));
     
     if (data.docsBase64) {
       // Используем оригинальное имя файла или генерируем

@@ -168,9 +168,26 @@ export default function StartupPage() {
       data.submissionDate = new Date().toISOString()
       const formData = new FormData()
       Object.entries(data).forEach(([key, value]) => formData.append(key, value as string))
-      if (docs) formData.append('docs', docs)
-      if (teamResume) formData.append('teamResume', teamResume)
-      if (financialModel) formData.append('financialModel', financialModel)
+      
+      // Проверяем и добавляем файлы
+      console.log('Submitting files:', {
+        docs: docs ? `File: ${docs.name}, ${docs.size} bytes` : 'null',
+        teamResume: teamResume ? `File: ${teamResume.name}, ${teamResume.size} bytes` : 'null',
+        financialModel: financialModel ? `File: ${financialModel.name}, ${financialModel.size} bytes` : 'null'
+      })
+      
+      if (docs) {
+        formData.append('docs', docs)
+        console.log('Added docs file to FormData:', docs.name)
+      }
+      if (teamResume) {
+        formData.append('teamResume', teamResume)
+        console.log('Added teamResume file to FormData:', teamResume.name)
+      }
+      if (financialModel) {
+        formData.append('financialModel', financialModel)
+        console.log('Added financialModel file to FormData:', financialModel.name)
+      }
 
       const response = await fetch('/api/startup', {
         method: 'POST',

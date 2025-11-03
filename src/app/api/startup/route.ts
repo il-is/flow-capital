@@ -20,26 +20,40 @@ export async function POST(request: Request) {
 
     const formData = await request.formData()
     
-    // Извлекаем текстовые данные
+    // Извлекаем текстовые данные (исключаем файлы)
     const data: any = {}
-    const textEntries = Array.from(formData.entries()).filter(([key, value]) => {
-      if (value instanceof File) return false
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        // Пропускаем файлы при извлечении текстовых данных
+        continue
+      }
       data[key] = value
-      return true
-    })
+    }
     
     console.log('Form data received:', Object.keys(data))
+    console.log('Form data entries count:', Array.from(formData.entries()).length)
     
-    // Извлекаем файлы
+    // Извлекаем файлы - проверяем каждый отдельно
     const docs = formData.get('docs') as File | null
     const teamResume = formData.get('teamResume') as File | null
     const financialModel = formData.get('financialModel') as File | null
 
-    console.log('Files received:', {
-      docs: docs ? `File: ${docs.name}, Size: ${docs.size} bytes, Type: ${docs.type}` : 'No docs',
-      teamResume: teamResume ? `File: ${teamResume.name}, Size: ${teamResume.size} bytes, Type: ${teamResume.type}` : 'No teamResume',
-      financialModel: financialModel ? `File: ${financialModel.name}, Size: ${financialModel.size} bytes, Type: ${financialModel.type}` : 'No financialModel'
+    console.log('Files extraction:', {
+      docs: docs ? `File: ${docs.name}, Size: ${docs.size} bytes, Type: ${docs.type}, instanceof File: ${docs instanceof File}` : 'No docs',
+      teamResume: teamResume ? `File: ${teamResume.name}, Size: ${teamResume.size} bytes, Type: ${teamResume.type}, instanceof File: ${teamResume instanceof File}` : 'No teamResume',
+      financialModel: financialModel ? `File: ${financialModel.name}, Size: ${financialModel.size} bytes, Type: ${financialModel.type}, instanceof File: ${financialModel instanceof File}` : 'No financialModel'
     })
+    
+    // Проверяем все файловые поля в FormData
+    const allEntries = Array.from(formData.entries())
+    console.log('All FormData entries:', allEntries.map(([key, value]) => [
+      key, 
+      value instanceof File 
+        ? `File: ${value.name}, ${value.size} bytes` 
+        : typeof value === 'string' 
+          ? `String: ${value.substring(0, 50)}...` 
+          : typeof value
+    ]))
 
     const result = await submitStartupApplication(data, docs, teamResume, financialModel)
     console.log('Application submitted successfully:', result)
