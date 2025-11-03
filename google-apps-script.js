@@ -23,6 +23,9 @@ function doGet(e) {
 
 /**
  * Обработчик POST запросов от веб-приложения
+ * Поддерживает два типа запросов:
+ * 1. type: 'application' - основная заявка (без файлов)
+ * 2. type: 'file' - загрузка одного файла
  */
 function doPost(e) {
   try {
@@ -31,6 +34,33 @@ function doPost(e) {
     
     // Парсим данные
     const data = JSON.parse(e.postData.contents);
+    const requestType = data.requestType || 'application'; // По умолчанию старая версия для обратной совместимости
+    
+    console.log('Request type:', requestType);
+    
+    if (requestType === 'file') {
+      // Обработка загрузки одного файла
+      return handleFileUpload(data);
+    } else {
+      // Обработка основной заявки (без файлов)
+      return handleApplicationSubmission(data);
+    }
+    
+  } catch (error) {
+    console.error('Error in doPost:', error);
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Обрабатывает отправку основной заявки (без файлов)
+ */
+function handleApplicationSubmission(data) {
+  try {
+    console.log('Handling application submission');
     console.log('Parsed data keys:', Object.keys(data));
     console.log('Submission ID:', data.submissionId);
     console.log('Company name:', data.companyName);
@@ -41,75 +71,11 @@ function doPost(e) {
     const folder = createSubmissionFolder(folderName);
     const folderUrl = folder.getUrl();
     
-    // Сохраняем файлы в папку
-    const fileUrls = {};
+    console.log('Created folder:', folderName, folderUrl);
     
-    // Проверяем наличие всех данных о файлах
-    console.log('Files data check:', {
-      hasDocsBase64: !!data.docsBase64,
-      docsBase64Type: typeof data.docsBase64,
-      docsBase64Length: data.docsBase64 ? data.docsBase64.length : 0,
-      hasDocsFileName: !!data.docsFileName,
-      docsFileName: data.docsFileName || 'none',
-      hasTeamResumeBase64: !!data.teamResumeBase64,
-      teamResumeBase64Type: typeof data.teamResumeBase64,
-      teamResumeBase64Length: data.teamResumeBase64 ? data.teamResumeBase64.length : 0,
-      hasTeamResumeFileName: !!data.teamResumeFileName,
-      teamResumeFileName: data.teamResumeFileName || 'none',
-      hasFinancialModelBase64: !!data.financialModelBase64,
-      financialModelBase64Type: typeof data.financialModelBase64,
-      financialModelBase64Length: data.financialModelBase64 ? data.financialModelBase64.length : 0,
-      hasFinancialModelFileName: !!data.financialModelFileName,
-      financialModelFileName: data.financialModelFileName || 'none'
-    });
-    
-    // Проверяем все ключи данных
-    console.log('All data keys:', Object.keys(data).filter(key => key.includes('Base64') || key.includes('FileName')));
-    
-    if (data.docsBase64) {
-      // Используем оригинальное имя файла или генерируем
-      const fileName = data.docsFileName 
-        ? `Дополнительные_документы_${submissionId}_${data.docsFileName}`
-        : `Дополнительные_документы_${submissionId}`;
-      console.log('Saving docs file:', fileName);
-      fileUrls.docs = saveFileToDrive(
-        folder,
-        fileName,
-        data.docsBase64
-      );
-      console.log('Docs file URL:', fileUrls.docs);
-    }
-    if (data.teamResumeBase64) {
-      // Используем оригинальное имя файла или генерируем
-      const fileName = data.teamResumeFileName 
-        ? `Резюме_команды_${submissionId}_${data.teamResumeFileName}`
-        : `Резюме_команды_${submissionId}`;
-      console.log('Saving teamResume file:', fileName);
-      fileUrls.teamResume = saveFileToDrive(
-        folder,
-        fileName,
-        data.teamResumeBase64
-      );
-      console.log('TeamResume file URL:', fileUrls.teamResume);
-    }
-    if (data.financialModelBase64) {
-      // Используем оригинальное имя файла или генерируем
-      const fileName = data.financialModelFileName 
-        ? `Финансовая_модель_${submissionId}_${data.financialModelFileName}`
-        : `Финансовая_модель_${submissionId}`;
-      console.log('Saving financialModel file:', fileName);
-      fileUrls.financialModel = saveFileToDrive(
-        folder,
-        fileName,
-        data.financialModelBase64
-      );
-      console.log('FinancialModel file URL:', fileUrls.financialModel);
-    }
-    
-    // Записываем данные в Google Таблицу
+    // Записываем данные в Google Таблицу (пока без файлов, ссылки обновим позже)
     let sheet;
     if (SPREADSHEET_ID && SPREADSHEET_ID !== '') {
-      // Используем указанный ID таблицы
       const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
       sheet = ss.getSheetByName(SHEET_NAME);
       
@@ -118,7 +84,6 @@ function doPost(e) {
         createHeaderRow(sheet);
       }
     } else {
-      // Используем активную таблицу (старый подход)
       const ss = SpreadsheetApp.getActiveSpreadsheet();
       sheet = ss.getSheetByName(SHEET_NAME) || ss.getActiveSheet();
     }
@@ -128,21 +93,169 @@ function doPost(e) {
       createHeaderRow(sheet);
     }
     
-    writeDataToSheet(sheet, data, folderUrl, fileUrls);
+    // Записываем данные с пустыми ссылками на файлы (они обновятся позже)
+    writeDataToSheet(sheet, data, folderUrl, {});
     
     return ContentService.createTextOutput(JSON.stringify({
       success: true,
       submissionId: submissionId,
       folderUrl: folderUrl,
-      fileUrls: fileUrls
+      folderId: folder.getId(),
+      message: 'Application submitted successfully'
     })).setMimeType(ContentService.MimeType.JSON);
     
   } catch (error) {
-    console.error('Error in doPost:', error);
+    console.error('Error in handleApplicationSubmission:', error);
     return ContentService.createTextOutput(JSON.stringify({
       success: false,
       error: error.toString()
     })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Обрабатывает загрузку одного файла
+ */
+function handleFileUpload(data) {
+  try {
+    console.log('Handling file upload');
+    console.log('File type:', data.fileType); // 'teamResume', 'financialModel', 'docs'
+    console.log('Submission ID:', data.submissionId);
+    console.log('File name:', data.fileName);
+    console.log('Base64 length:', data.base64 ? data.base64.length : 0);
+    
+    const submissionId = data.submissionId;
+    const folderId = data.folderId;
+    const fileType = data.fileType; // 'teamResume', 'financialModel', 'docs'
+    const base64Data = data.base64;
+    const fileName = data.fileName;
+    
+    if (!submissionId || !folderId || !fileType || !base64Data) {
+      throw new Error('Missing required fields: submissionId, folderId, fileType, base64');
+    }
+    
+    // Находим папку
+    let folder;
+    try {
+      folder = DriveApp.getFolderById(folderId);
+    } catch (error) {
+      throw new Error('Folder not found: ' + folderId);
+    }
+    
+    // Формируем имя файла
+    let finalFileName;
+    const fileTypeNames = {
+      'teamResume': 'Резюме_команды',
+      'financialModel': 'Финансовая_модель',
+      'docs': 'Дополнительные_документы'
+    };
+    const typePrefix = fileTypeNames[fileType] || 'Файл';
+    
+    if (fileName) {
+      finalFileName = `${typePrefix}_${submissionId}_${fileName}`;
+    } else {
+      finalFileName = `${typePrefix}_${submissionId}`;
+    }
+    
+    console.log('Saving file:', finalFileName);
+    
+    // Сохраняем файл
+    const fileUrl = saveFileToDrive(folder, finalFileName, base64Data);
+    
+    if (!fileUrl) {
+      throw new Error('Failed to save file to Drive');
+    }
+    
+    console.log('File saved successfully:', fileUrl);
+    
+    // Обновляем ссылку на файл в таблице
+    updateFileUrlInSheet(submissionId, fileType, fileUrl);
+    
+    return ContentService.createTextOutput(JSON.stringify({
+      success: true,
+      fileUrl: fileUrl,
+      fileType: fileType,
+      message: 'File uploaded successfully'
+    })).setMimeType(ContentService.MimeType.JSON);
+    
+  } catch (error) {
+    console.error('Error in handleFileUpload:', error);
+    return ContentService.createTextOutput(JSON.stringify({
+      success: false,
+      error: error.toString()
+    })).setMimeType(ContentService.MimeType.JSON);
+  }
+}
+
+/**
+ * Обновляет ссылку на файл в строке таблицы
+ */
+function updateFileUrlInSheet(submissionId, fileType, fileUrl) {
+  try {
+    let sheet;
+    if (SPREADSHEET_ID && SPREADSHEET_ID !== '') {
+      const ss = SpreadsheetApp.openById(SPREADSHEET_ID);
+      sheet = ss.getSheetByName(SHEET_NAME);
+    } else {
+      const ss = SpreadsheetApp.getActiveSpreadsheet();
+      sheet = ss.getSheetByName(SHEET_NAME) || ss.getActiveSheet();
+    }
+    
+    if (!sheet) {
+      console.error('Sheet not found');
+      return;
+    }
+    
+    // Находим строку по submissionId
+    const headerRow = 1;
+    const submissionIdColumn = 2; // Колонка с submissionId (начинается с 1)
+    
+    const lastRow = sheet.getLastRow();
+    let foundRow = -1;
+    
+    for (let row = headerRow + 1; row <= lastRow; row++) {
+      const cellValue = sheet.getRange(row, submissionIdColumn).getValue();
+      if (cellValue === submissionId) {
+        foundRow = row;
+        break;
+      }
+    }
+    
+    if (foundRow === -1) {
+      console.error('Row with submissionId not found:', submissionId);
+      return;
+    }
+    
+    // Определяем колонку для файла
+    // Порядок колонок в заголовке (последние 4):
+    // 31: 'Ссылка на папку с файлами' (folderUrl)
+    // 32: 'Ссылка на резюме команды' (teamResume)
+    // 33: 'Ссылка на финансовую модель' (financialModel)
+    // 34: 'Ссылка на дополнительные документы' (docs)
+    const lastColumn = sheet.getLastColumn();
+    const folderUrlColumn = lastColumn - 3; // Колонка 31 из 34 (если 34 колонки)
+    const teamResumeColumn = lastColumn - 2; // Колонка 32
+    const financialModelColumn = lastColumn - 1; // Колонка 33
+    const docsColumn = lastColumn; // Колонка 34
+    
+    let targetColumn;
+    if (fileType === 'teamResume') {
+      targetColumn = teamResumeColumn;
+    } else if (fileType === 'financialModel') {
+      targetColumn = financialModelColumn;
+    } else if (fileType === 'docs') {
+      targetColumn = docsColumn;
+    } else {
+      console.error('Unknown file type:', fileType);
+      return;
+    }
+    
+    // Обновляем ячейку
+    sheet.getRange(foundRow, targetColumn).setValue(fileUrl);
+    console.log('Updated file URL in row', foundRow, 'column', targetColumn);
+    
+  } catch (error) {
+    console.error('Error updating file URL in sheet:', error);
   }
 }
 

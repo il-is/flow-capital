@@ -130,8 +130,9 @@ export async function submitStartupApplication(data: any, docs: File | null, tea
       console.log('FinancialModel base64 length:', financialModelBase64 ? financialModelBase64.length : 0, 'characters')
     }
 
-    // Подготовка данных для записи (актуализировано согласно CSV)
-    const formData = {
+    // ШАГ 1: Отправляем основную заявку БЕЗ файлов
+    const applicationData = {
+      requestType: 'application',
       // Интро
       submissionDate: new Date().toISOString(),
       companyName: data.companyName,
@@ -173,76 +174,113 @@ export async function submitStartupApplication(data: any, docs: File | null, tea
       // Завершение
       growthLimitations: data.growthLimitations,
       
-      // Файлы (в base64 для отправки в Google Apps Script)
-      docsBase64,                    // Дополнительные документы (шаг 6)
-      docsFileName,                  // Оригинальное имя файла
-      teamResumeBase64,              // Резюме команды (шаг 2)
-      teamResumeFileName,            // Оригинальное имя файла
-      financialModelBase64,          // Финансовая модель (шаг 4)
-      financialModelFileName,        // Оригинальное имя файла
-      
       // ID заявки
       submissionId
     }
 
-    console.log('Sending data to Google Apps Script...')
-    console.log('FormData summary:', {
-      hasDocsBase64: !!formData.docsBase64,
-      docsBase64Length: formData.docsBase64 ? formData.docsBase64.length : 0,
-      hasTeamResumeBase64: !!formData.teamResumeBase64,
-      teamResumeBase64Length: formData.teamResumeBase64 ? formData.teamResumeBase64.length : 0,
-      hasFinancialModelBase64: !!formData.financialModelBase64,
-      financialModelBase64Length: formData.financialModelBase64 ? formData.financialModelBase64.length : 0,
-      totalFields: Object.keys(formData).length
-    })
-
-    // Отправка данных в Google Apps Script
-    // ВАЖНО: Google Apps Script doPost имеет ограничение ~6MB на размер данных
-    const jsonPayload = JSON.stringify(formData)
-    const payloadSizeMB = jsonPayload.length / (1024 * 1024)
-    console.log('JSON payload size:', payloadSizeMB.toFixed(2), 'MB (', jsonPayload.length, 'characters)')
-    
-    if (payloadSizeMB > 5.5) {
-      console.warn('⚠️ WARNING: Payload size exceeds 5.5MB, may fail to process:', {
-        docsSize: formData.docsBase64 ? (formData.docsBase64.length / (1024 * 1024)).toFixed(2) + ' MB' : 'none',
-        teamResumeSize: formData.teamResumeBase64 ? (formData.teamResumeBase64.length / (1024 * 1024)).toFixed(2) + ' MB' : 'none',
-        financialModelSize: formData.financialModelBase64 ? (formData.financialModelBase64.length / (1024 * 1024)).toFixed(2) + ' MB' : 'none'
-      })
-    }
-    
-    const response = await fetch(GOOGLE_SCRIPT_URL!, {
+    console.log('Step 1: Sending application data (without files)...')
+    const applicationResponse = await fetch(GOOGLE_SCRIPT_URL!, {
       method: 'POST',
-      body: jsonPayload,
+      body: JSON.stringify(applicationData),
       headers: {
         'Content-Type': 'application/json',
       },
     })
 
-    console.log('Google Apps Script response status:', response.status)
-    const rawText = await response.text()
-    console.log('Google Apps Script rawText:', rawText);
-    let responseData
+    console.log('Application response status:', applicationResponse.status)
+    const applicationResponseText = await applicationResponse.text()
+    let applicationResponseData
     try {
-      responseData = JSON.parse(rawText)
+      applicationResponseData = JSON.parse(applicationResponseText)
     } catch (e) {
-      throw new Error('Google Script вернул некорректный ответ: ' + rawText.slice(0, 100))
+      throw new Error('Google Script вернул некорректный ответ: ' + applicationResponseText.slice(0, 100))
     }
-    console.log('Google Apps Script response:', responseData)
-    if (!response.ok) {
-      throw new Error(`Failed to submit to Google Sheets: ${JSON.stringify(responseData)}`)
+    
+    if (!applicationResponse.ok || !applicationResponseData.success) {
+      throw new Error(`Failed to submit application: ${JSON.stringify(applicationResponseData)}`)
     }
 
-    console.log('Sending email notification...')
+    const folderId = applicationResponseData.folderId
+    const folderUrl = applicationResponseData.folderUrl
+    console.log('Application submitted successfully. Folder ID:', folderId, 'Folder URL:', folderUrl)
+
+    // ШАГ 2: Отправляем файлы отдельными запросами
+    const fileUploadResults: any = {
+      teamResume: null,
+      financialModel: null,
+      docs: null
+    }
+
+    const uploadFile = async (fileType: 'teamResume' | 'financialModel' | 'docs', base64: string | null, fileName: string | null) => {
+      if (!base64 || !fileName) {
+        console.log(`Skipping ${fileType} - no file provided`)
+        return null
+      }
+
+      try {
+        console.log(`Uploading ${fileType}...`, fileName, 'Base64 length:', base64.length)
+        
+        const fileData = {
+          requestType: 'file',
+          submissionId: submissionId,
+          folderId: folderId,
+          fileType: fileType,
+          base64: base64,
+          fileName: fileName
+        }
+
+        const fileResponse = await fetch(GOOGLE_SCRIPT_URL!, {
+          method: 'POST',
+          body: JSON.stringify(fileData),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        })
+
+        const fileResponseText = await fileResponse.text()
+        let fileResponseData
+        try {
+          fileResponseData = JSON.parse(fileResponseText)
+        } catch (e) {
+          throw new Error('Invalid response: ' + fileResponseText.slice(0, 100))
+        }
+
+        if (!fileResponse.ok || !fileResponseData.success) {
+          throw new Error(`Failed to upload ${fileType}: ${JSON.stringify(fileResponseData)}`)
+        }
+
+        console.log(`${fileType} uploaded successfully:`, fileResponseData.fileUrl)
+        return fileResponseData.fileUrl
+      } catch (error) {
+        console.error(`Error uploading ${fileType}:`, error)
+        // НЕ прерываем процесс, просто логируем ошибку
+        return null
+      }
+    }
+
+    // Загружаем файлы последовательно
+    fileUploadResults.teamResume = await uploadFile('teamResume', teamResumeBase64, teamResumeFileName)
+    fileUploadResults.financialModel = await uploadFile('financialModel', financialModelBase64, financialModelFileName)
+    fileUploadResults.docs = await uploadFile('docs', docsBase64, docsFileName)
+
+    console.log('File upload results:', fileUploadResults)
+
     // Отправка уведомления на email
+    console.log('Sending email notification...')
     try {
-      const emailResult = await sendEmailNotification(data, responseData.folderUrl)
+      const emailResult = await sendEmailNotification(data, folderUrl)
       console.log('Email notification sent successfully:', emailResult.messageId)
     } catch (emailError) {
       console.error('Failed to send email notification:', emailError)
       // Не прерываем выполнение, если email не отправился
     }
 
-    return { success: true, submissionId, folderUrl: responseData.folderUrl }
+    return { 
+      success: true, 
+      submissionId, 
+      folderUrl: folderUrl,
+      fileUploads: fileUploadResults
+    }
   } catch (error) {
     console.error('Error in submitStartupApplication:', error)
     throw error

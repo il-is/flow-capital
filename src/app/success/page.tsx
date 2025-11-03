@@ -29,7 +29,7 @@ export default function SuccessPage() {
             </h1>
             
             <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
-              Спасибо за ваш интерес к Flow Capital. Мы рассмотрим вашу заявку и свяжемся с вами в течение 5 рабочих дней.
+              Спасибо за ваш интерес к Flow.Capital. Мы рассмотрим вашу заявку и свяжемся с вами в течение 5 рабочих дней.
             </p>
             
             <div className="space-y-4">
