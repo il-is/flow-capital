@@ -93,7 +93,7 @@ async function sendEmailNotification(data: any, folderUrl: string) {
 }
 
 // Функция для сохранения заявки через Google Apps Script
-export async function submitStartupApplication(data: any, docs: File | null) {
+export async function submitStartupApplication(data: any, docs: File | null, teamResume: File | null = null, financialModel: File | null = null) {
   try {
     console.log('Starting submission process...')
     console.log('GOOGLE_SCRIPT_URL:', GOOGLE_SCRIPT_URL)
@@ -103,13 +103,25 @@ export async function submitStartupApplication(data: any, docs: File | null) {
 
     // Конвертируем файлы в base64
     let docsBase64 = null
+    let teamResumeBase64 = null
+    let financialModelBase64 = null
 
     if (docs) {
       console.log('Converting docs to base64...')
       docsBase64 = await fileToBase64(docs)
     }
 
-    // Подготовка данных для записи
+    if (teamResume) {
+      console.log('Converting teamResume to base64...')
+      teamResumeBase64 = await fileToBase64(teamResume)
+    }
+
+    if (financialModel) {
+      console.log('Converting financialModel to base64...')
+      financialModelBase64 = await fileToBase64(financialModel)
+    }
+
+    // Подготовка данных для записи (актуализировано согласно CSV)
     const formData = {
       // Интро
       submissionDate: new Date().toISOString(),
@@ -121,44 +133,41 @@ export async function submitStartupApplication(data: any, docs: File | null) {
       // Команда
       teamExperience: data.teamExperience,
       teamMembers: data.teamMembers,
-      teamComment: data.teamComment,
       
       // Продукт и технологии
       productDescription: data.productDescription,
       productAvailability: data.productAvailability,
       productAudience: data.productAudience,
       uniqueSellingPoint: data.uniqueSellingPoint,
-      productUniqueness: data.productUniqueness,
       researchAvailability: data.researchAvailability,
       techScalability: data.techScalability,
       marketSize: data.marketSize,
-      productTechComment: data.productTechComment,
       
       // Финансы
       currentSales: data.currentSales,
+      currentExpenses: data.currentExpenses,
       currentUsers: data.currentUsers,
       investmentAmount: data.investmentAmount,
       equityPercentage: data.equityPercentage,
       investmentPlan: data.investmentPlan,
       geographicScalability: data.geographicScalability,
-      unitEconomics: data.unitEconomics,
       currentInvestments: data.currentInvestments,
       capTable: data.capTable,
       companyValuation: data.companyValuation,
-      financeComment: data.financeComment,
       
       // Риски
       marketRisks: data.marketRisks,
       operationalRisks: data.operationalRisks,
       companyRegistration: data.companyRegistration,
       licensesCompliance: data.licensesCompliance,
-      risksComment: data.risksComment,
       
       // Завершение
       growthLimitations: data.growthLimitations,
       
-      // Файлы
-      docsBase64,
+      // Файлы (в base64 для отправки в Google Apps Script)
+      docsBase64,                    // Дополнительные документы (шаг 6)
+      teamResumeBase64,              // Резюме команды (шаг 2)
+      financialModelBase64,          // Финансовая модель (шаг 4)
       
       // ID заявки
       submissionId

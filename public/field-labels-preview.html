@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Примеры визуального выделения полей</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .section {
+            margin-bottom: 3rem;
+            padding: 2rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 0.5rem;
+            background: white;
+        }
+        .preview-box {
+            background: #f9fafb;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 py-12 px-4">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl font-bold text-gray-900 mb-2">Примеры визуального выделения полей</h1>
+        <p class="text-gray-600 mb-8">Выберите вариант, который лучше всего подходит для вашей формы</p>
+
+        <!-- Вариант 1: Звездочка -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 1: Звездочка (минималистичный)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Название стартапа <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Размер рынка <span class="text-gray-400 text-xs ml-2 font-normal">(необязательно)</span>
+                        </label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вариант 2: Бейджи -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 2: Бейджи (современный, информативный)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div>
+                        <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                            Название стартапа
+                            <span class="text-xs px-2 py-0.5 bg-red-50 text-red-600 rounded-full border border-red-200 font-medium">
+                                Обязательно
+                            </span>
+                        </label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+                            Размер рынка
+                            <span class="text-xs px-2 py-0.5 bg-gray-50 text-gray-500 rounded-full border border-gray-200 font-normal">
+                                Необязательно
+                            </span>
+                        </label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вариант 3: Цветная левая граница -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 3: Цветная левая граница (минималистичный, интуитивный)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div class="border-l-4 border-l-red-500 pl-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Название стартапа
+                        </label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div class="border-l-4 border-l-gray-300 pl-4 opacity-75">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Размер рынка
+                        </label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вариант 4: Иконки точки -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 4: Иконки точки (современный, визуально привлекательный)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div>
+                        <label class="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-red-500"></span>
+                            Название стартапа
+                        </label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-1.5 text-sm font-medium text-gray-500 mb-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-gray-300 border border-gray-400"></span>
+                            Размер рынка
+                            <span class="text-xs text-gray-400 ml-1 font-normal">(опционально)</span>
+                        </label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вариант 5: Мягкий фон -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 5: Мягкий фон (ненавязчивый, современный)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div class="bg-red-50/50 border border-red-100 rounded-lg p-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Название стартапа <span class="text-red-500 text-xs">*</span>
+                        </label>
+                        <input type="text" class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div class="bg-gray-50/50 border border-gray-200 rounded-lg p-4">
+                        <label class="block text-sm font-medium text-gray-600 mb-2">
+                            Размер рынка
+                        </label>
+                        <textarea class="w-full px-4 py-2 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вариант 6: Комбинированный -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 6: Комбинированный (звездочка + цвет + подпись)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div>
+                        <label class="flex items-center gap-1.5 text-sm font-medium text-gray-700 mb-2">
+                            Название стартапа
+                            <span class="text-red-500">*</span>
+                            <span class="text-xs text-gray-400 font-normal ml-1">(обязательно)</span>
+                        </label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-1.5 text-sm font-medium text-gray-600 mb-2">
+                            Размер рынка
+                            <span class="text-xs text-gray-400 font-normal">(необязательно)</span>
+                        </label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вариант 7: Только звездочка -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 7: Только звездочка (максимально чистый)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">
+                            Название стартапа <span class="text-red-500">*</span>
+                        </label>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-600 mb-2">
+                            Размер рынка
+                        </label>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Вариант 8: Звездочка справа -->
+        <div class="section">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Вариант 8: Звездочка справа (европейский стиль)</h2>
+            <div class="preview-box">
+                <div class="space-y-4">
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-700">
+                                Название стартапа
+                            </label>
+                            <span class="text-red-500 text-xs font-semibold">*</span>
+                        </div>
+                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Введите название стартапа" />
+                    </div>
+                    <div>
+                        <div class="flex items-center justify-between mb-2">
+                            <label class="block text-sm font-medium text-gray-600">
+                                Размер рынка
+                            </label>
+                            <span class="text-gray-300 text-xs">○</span>
+                        </div>
+                        <textarea class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" rows="3" placeholder="Опишите размер рынка"></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Рекомендации -->
+        <div class="mt-8 p-6 bg-blue-50 border border-blue-200 rounded-lg">
+            <h3 class="text-lg font-semibold text-blue-900 mb-3">💡 Рекомендации</h3>
+            <ul class="space-y-2 text-blue-800">
+                <li><strong>Вариант 1:</strong> Самый универсальный и минималистичный - подходит для большинства случаев</li>
+                <li><strong>Вариант 2:</strong> Современный и информативный - хорошо для сложных форм</li>
+                <li><strong>Вариант 4:</strong> Визуально привлекательный - отлично для премиум-интерфейсов</li>
+                <li><strong>Вариант 7:</strong> Максимально чистый - для минималистичного дизайна</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+

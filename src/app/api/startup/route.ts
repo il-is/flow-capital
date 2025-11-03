@@ -23,12 +23,16 @@ export async function POST(request: Request) {
     
     const data = Object.fromEntries(formData.entries())
     const docs = formData.get('docs') as File | null
+    const teamResume = formData.get('teamResume') as File | null
+    const financialModel = formData.get('financialModel') as File | null
 
     console.log('Files received:', {
-      docs: docs ? `File: ${docs.name}, Size: ${docs.size}` : 'No docs'
+      docs: docs ? `File: ${docs.name}, Size: ${docs.size}` : 'No docs',
+      teamResume: teamResume ? `File: ${teamResume.name}, Size: ${teamResume.size}` : 'No teamResume',
+      financialModel: financialModel ? `File: ${financialModel.name}, Size: ${financialModel.size}` : 'No financialModel'
     })
 
-    const result = await submitStartupApplication(data, docs)
+    const result = await submitStartupApplication(data, docs, teamResume, financialModel)
     console.log('Application submitted successfully:', result)
 
     return NextResponse.json(result)
