@@ -22,7 +22,9 @@ export async function POST(request: Request) {
     
     // Извлекаем текстовые данные (исключаем файлы)
     const data: any = {}
-    for (const [key, value] of formData.entries()) {
+    // Преобразуем итератор в массив для совместимости с TypeScript
+    const entries = Array.from(formData.entries())
+    for (const [key, value] of entries) {
       if (value instanceof File) {
         // Пропускаем файлы при извлечении текстовых данных
         continue
