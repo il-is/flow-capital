@@ -13,7 +13,8 @@ const questionToFieldKey: { [key: string]: string } = {
   'Наличие продукта': 'productAvailability',
   'Аудитория продукта': 'productAudience',
   'Уникальное торговое предложение': 'uniqueSellingPoint',
-  'Наличие исследований': 'researchAvailability',
+  'Наличие исследований': 'developmentPlans', // Старое название для обратной совместимости
+  'Планы развития': 'developmentPlans',
   'Технологическая масштабируемость': 'techScalability',
   'Размер рынка': 'marketSize',
   'Текущие продажи': 'currentSales',
@@ -30,6 +31,11 @@ const questionToFieldKey: { [key: string]: string } = {
   'Операционные риски': 'operationalRisks',
   'Регистрация компании': 'companyRegistration',
   'Лицензии и регуляторное соответствие': 'licensesCompliance',
+  'Наличие зарегистрированных интеллектуальных прав': 'intellectualProperty',
+  'Наличие текущих судебных споров': 'legalDisputes',
+  'Наличие договоров с инвесторами': 'investorAgreements',
+  'Формализованная структура владения': 'ownershipStructure',
+  'Наличие подписанных договоров с подрядчиками': 'contractorAgreements',
   'Что ограничивает компанию от роста до «единорога»': 'growthLimitations',
 }
 

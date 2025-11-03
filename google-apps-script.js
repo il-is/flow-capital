@@ -276,7 +276,7 @@ function createHeaderRow(sheet) {
     'Наличие продукта',
     'Аудитория продукта',
     'Уникальное торговое предложение',
-    'Наличие исследований',
+    'Планы развития',
     'Технологическая масштабируемость',
     'Размер рынка',
     'Текущие продажи',
@@ -293,6 +293,11 @@ function createHeaderRow(sheet) {
     'Операционные риски',
     'Регистрация компании',
     'Лицензии и регуляторное соответствие',
+    'Наличие зарегистрированных интеллектуальных прав',
+    'Наличие текущих судебных споров',
+    'Наличие договоров с инвесторами',
+    'Формализованная структура владения',
+    'Наличие подписанных договоров с подрядчиками',
     'Что ограничивает компанию от роста до единорога',
     'Ссылка на папку с файлами',
     'Ссылка на резюме команды',
@@ -329,7 +334,7 @@ function writeDataToSheet(sheet, data, folderUrl, fileUrls) {
     data.productAvailability || '',
     data.productAudience || '',
     data.uniqueSellingPoint || '',
-    data.researchAvailability || '',
+    data.developmentPlans || '',
     data.techScalability || '',
     data.marketSize || '',
     
@@ -350,6 +355,13 @@ function writeDataToSheet(sheet, data, folderUrl, fileUrls) {
     data.operationalRisks || '',
     data.companyRegistration || '',
     data.licensesCompliance || '',
+    
+    // Юридические вопросы
+    data.intellectualProperty || '',
+    data.legalDisputes || '',
+    data.investorAgreements || '',
+    data.ownershipStructure || '',
+    data.contractorAgreements || '',
     
     // Завершение
     data.growthLimitations || '',

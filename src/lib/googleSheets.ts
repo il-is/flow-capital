@@ -149,7 +149,7 @@ export async function submitStartupApplication(data: any, docs: File | null, tea
       productAvailability: data.productAvailability,
       productAudience: data.productAudience,
       uniqueSellingPoint: data.uniqueSellingPoint,
-      researchAvailability: data.researchAvailability,
+      developmentPlans: data.developmentPlans,
       techScalability: data.techScalability,
       marketSize: data.marketSize,
       
@@ -170,6 +170,13 @@ export async function submitStartupApplication(data: any, docs: File | null, tea
       operationalRisks: data.operationalRisks,
       companyRegistration: data.companyRegistration,
       licensesCompliance: data.licensesCompliance,
+      
+      // Юридические вопросы
+      intellectualProperty: data.intellectualProperty,
+      legalDisputes: data.legalDisputes,
+      investorAgreements: data.investorAgreements,
+      ownershipStructure: data.ownershipStructure,
+      contractorAgreements: data.contractorAgreements,
       
       // Завершение
       growthLimitations: data.growthLimitations,

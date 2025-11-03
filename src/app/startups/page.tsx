@@ -43,7 +43,7 @@ type FormData = {
   productAvailability: string;
   productAudience: string;
   uniqueSellingPoint: string;
-  researchAvailability: string;
+  developmentPlans: string; // Планы развития (было: researchAvailability)
   techScalability: string;
   marketSize: string;
   
@@ -64,6 +64,13 @@ type FormData = {
   operationalRisks: string;
   companyRegistration: string;
   licensesCompliance: string;
+  
+  // Юридические вопросы
+  intellectualProperty: string;
+  legalDisputes: string;
+  investorAgreements: string;
+  ownershipStructure: string;
+  contractorAgreements: string;
   
   // Завершение
   growthLimitations: string;
@@ -88,7 +95,7 @@ export default function StartupPage() {
       productAvailability: '',
       productAudience: '',
       uniqueSellingPoint: '',
-      researchAvailability: '',
+      developmentPlans: '',
       techScalability: '',
       marketSize: '',
       currentSales: '',
@@ -105,6 +112,11 @@ export default function StartupPage() {
       operationalRisks: '',
       companyRegistration: '',
       licensesCompliance: '',
+      intellectualProperty: '',
+      legalDisputes: '',
+      investorAgreements: '',
+      ownershipStructure: '',
+      contractorAgreements: '',
       growthLimitations: ''
     }
   })
@@ -344,12 +356,14 @@ export default function StartupPage() {
       case 2:
         return ['teamExperience', 'teamMembers']
       case 3:
-        return ['productDescription', 'productAvailability', 'productAudience', 'uniqueSellingPoint', 'researchAvailability', 'techScalability']
+        return ['productDescription', 'productAvailability', 'productAudience', 'uniqueSellingPoint', 'developmentPlans', 'techScalability']
       case 4:
         return ['currentSales', 'currentExpenses', 'investmentAmount', 'investmentPlan', 'currentInvestments', 'capTable']
       case 5:
         return ['marketRisks', 'operationalRisks', 'companyRegistration', 'licensesCompliance']
       case 6:
+        return ['intellectualProperty', 'legalDisputes', 'investorAgreements', 'ownershipStructure', 'contractorAgreements']
+      case 7:
         return ['growthLimitations']
       default:
         return []
@@ -900,10 +914,10 @@ export default function StartupPage() {
                     {triedNext && errors.uniqueSellingPoint && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
-                    <FieldLabel required={true}>Наличие исследований</FieldLabel>
-                    <textarea {...register('researchAvailability', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите планы развития проекта и цели" onFocus={() => setFocusedField('researchAvailability')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={2000} field="researchAvailability" />
-                    {triedNext && errors.researchAvailability && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                    <FieldLabel required={true}>Планы развития</FieldLabel>
+                    <textarea {...register('developmentPlans', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Опишите планы развития проекта и цели" onFocus={() => setFocusedField('developmentPlans')} onBlur={() => setFocusedField(null)} />
+                    <CharLimit limit={2000} field="developmentPlans" />
+                    {triedNext && errors.developmentPlans && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                   </div>
                   <div>
                     <FieldLabel required={true}>Технологическая масштабируемость</FieldLabel>
