@@ -16,6 +16,7 @@ const DEFAULT_SECTION_TITLES = [
   'Продукт и технологии',
   'Финансы',
   'Риски',
+  'Юридические вопросы',
   'Завершение',
 ];
 
@@ -491,7 +492,7 @@ export default function StartupPage() {
   const sectionNav = (
     <div className="mb-8">
       <div className="flex gap-6 mb-2 px-2 -mx-2 flex-wrap justify-center">
-        {[1,2,3,4,5,6].map((i) => {
+        {Array.from({ length: getSectionTitles().length }, (_, i) => i + 1).map((i) => {
           const filledCount = getFilledFieldsCount(i);
           const requiredCount = getRequiredFieldsCount(i);
           const progress = requiredCount > 0 ? Math.round((filledCount / requiredCount) * 100) : 0;
@@ -1055,39 +1056,240 @@ export default function StartupPage() {
                   className="space-y-6"
                   data-step="6"
                 >
-                  <div>
-                    <FieldLabel required={true}>Что ограничивает компанию от роста до «единорога»</FieldLabel>
-                    <textarea {...register('growthLimitations', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Опишите основные ограничения и препятствия для роста вашей компании" onFocus={() => setFocusedField('growthLimitations')} onBlur={() => setFocusedField(null)} />
-                    <CharLimit limit={3000} field="growthLimitations" />
-                    {triedNext && errors.growthLimitations && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
-                  </div>
-                  <div>
-                    <FieldLabel required={false}>Приложить файлы</FieldLabel>
-                    <div className="text-sm text-gray-600 mb-3">
-                      Приложите сопутствующие документы для оценки. Например, презентации по проекту, проведенные вами исследования рынка или конкурентов.
-                    </div>
-                    <div className="space-y-3">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Дополнительные документы</label>
-                        <input 
-                          type="file" 
-                          accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx"
-                          onChange={(e) => setDocs(e.target.files?.[0] || null)}
-                          className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
-                        />
-                        {docs && (
-                          <p className="mt-2 text-sm text-gray-600">Выбран файл: {docs.name}</p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
+                  {(() => {
+                    const fields = getFieldsForCurrentStep()
+                    if (fields.length > 0 && formConfig && !configLoading) {
+                      return fields.map((fieldConfig, idx) => {
+                        const fieldKey = getFieldKeyFromQuestion(fieldConfig.question) as keyof FormData
+                        return (
+                          <div key={idx}>
+                            <FieldLabel required={fieldConfig.required}>{fieldConfig.question}</FieldLabel>
+                            {fieldConfig.fieldType === 'textarea' ? (
+                              <>
+                                <textarea 
+                                  {...register(fieldKey, { 
+                                    required: fieldConfig.required,
+                                    maxLength: fieldConfig.maxLength
+                                  })} 
+                                  rows={fieldConfig.rows || 3} 
+                                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black ${
+                                    triedNext && errors[fieldKey] ? 'border-red-500' : ''
+                                  }`}
+                                  maxLength={fieldConfig.maxLength}
+                                  placeholder={fieldConfig.placeholder || ''}
+                                  onFocus={() => setFocusedField(fieldKey as string)} 
+                                  onBlur={() => setFocusedField(null)} 
+                                />
+                                {fieldConfig.maxLength && <CharLimit limit={fieldConfig.maxLength} field={fieldKey} />}
+                                <div className="min-h-[22px]">
+                                  {triedNext && errors[fieldKey] && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                      {errors[fieldKey]?.message || 'Это поле обязательно'}
+                                    </p>
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <input 
+                                  type={fieldConfig.fieldType || 'text'}
+                                  {...register(fieldKey, { 
+                                    required: fieldConfig.required,
+                                    maxLength: fieldConfig.maxLength
+                                  })} 
+                                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black ${
+                                    triedNext && errors[fieldKey] ? 'border-red-500' : ''
+                                  }`}
+                                  placeholder={fieldConfig.placeholder || ''}
+                                  onFocus={() => setFocusedField(fieldKey as string)} 
+                                  onBlur={() => setFocusedField(null)} 
+                                />
+                                {fieldConfig.maxLength && <CharLimit limit={fieldConfig.maxLength} field={fieldKey} />}
+                                <div className="min-h-[22px]">
+                                  {triedNext && errors[fieldKey] && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                      {errors[fieldKey]?.message || 'Это поле обязательно'}
+                                    </p>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )
+                      })
+                    }
+                    // Дефолтные поля для юридических вопросов
+                    return (
+                      <>
+                        <div>
+                          <FieldLabel required={true}>Наличие зарегистрированных интеллектуальных прав</FieldLabel>
+                          <textarea {...register('intellectualProperty', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставите сведения о наличии зарегистрированных интеллектуальных прав" onFocus={() => setFocusedField('intellectualProperty')} onBlur={() => setFocusedField(null)} />
+                          <CharLimit limit={2000} field="intellectualProperty" />
+                          {triedNext && errors.intellectualProperty && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                        </div>
+                        <div>
+                          <FieldLabel required={true}>Наличие текущих судебных споров</FieldLabel>
+                          <textarea {...register('legalDisputes', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставите сведения о наличии текущих судебных споров" onFocus={() => setFocusedField('legalDisputes')} onBlur={() => setFocusedField(null)} />
+                          <CharLimit limit={2000} field="legalDisputes" />
+                          {triedNext && errors.legalDisputes && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                        </div>
+                        <div>
+                          <FieldLabel required={true}>Наличие договоров с инвесторами</FieldLabel>
+                          <textarea {...register('investorAgreements', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставите сведения о наличии договоров/соглашений с инвесторами" onFocus={() => setFocusedField('investorAgreements')} onBlur={() => setFocusedField(null)} />
+                          <CharLimit limit={2000} field="investorAgreements" />
+                          {triedNext && errors.investorAgreements && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                        </div>
+                        <div>
+                          <FieldLabel required={true}>Формализованная структура владения</FieldLabel>
+                          <textarea {...register('ownershipStructure', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли формализованная структура владения и документы между основателями" onFocus={() => setFocusedField('ownershipStructure')} onBlur={() => setFocusedField(null)} />
+                          <CharLimit limit={2000} field="ownershipStructure" />
+                          {triedNext && errors.ownershipStructure && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                        </div>
+                        <div>
+                          <FieldLabel required={true}>Наличие подписанных договоров с подрядчиками</FieldLabel>
+                          <textarea {...register('contractorAgreements', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли подписанные договоры или оферты с клиентами/подрядчиками?" onFocus={() => setFocusedField('contractorAgreements')} onBlur={() => setFocusedField(null)} />
+                          <CharLimit limit={2000} field="contractorAgreements" />
+                          {triedNext && errors.contractorAgreements && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                        </div>
+                      </>
+                    )
+                  })()}
+                </motion.div>
+              )}
+              {step === 7 && (
+                <motion.div 
+                  initial={{ opacity: 0, x: 20 }} 
+                  animate={{ opacity: 1, x: 0 }} 
+                  transition={{ duration: 0.5 }} 
+                  className="space-y-6"
+                  data-step="7"
+                >
+                  {(() => {
+                    const fields = getFieldsForCurrentStep()
+                    if (fields.length > 0 && formConfig && !configLoading) {
+                      return fields.map((fieldConfig, idx) => {
+                        const fieldKey = getFieldKeyFromQuestion(fieldConfig.question) as keyof FormData
+                        // Специальная обработка для файлового поля
+                        if (fieldConfig.fieldType === 'file') {
+                          return (
+                            <div key={idx}>
+                              <FieldLabel required={fieldConfig.required}>{fieldConfig.question}</FieldLabel>
+                              {fieldConfig.placeholder && (
+                                <div className="text-sm text-gray-600 mb-3">{fieldConfig.placeholder}</div>
+                              )}
+                              <div className="space-y-3">
+                                <div>
+                                  <label className="block text-sm font-medium text-gray-700 mb-1">Дополнительные документы</label>
+                                  <input 
+                                    type="file" 
+                                    accept={fieldConfig.accept || ".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx"}
+                                    onChange={(e) => setDocs(e.target.files?.[0] || null)}
+                                    className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                                  />
+                                  {docs && (
+                                    <p className="mt-2 text-sm text-gray-600">Выбран файл: {docs.name}</p>
+                                  )}
+                                </div>
+                              </div>
+                            </div>
+                          )
+                        }
+                        return (
+                          <div key={idx}>
+                            <FieldLabel required={fieldConfig.required}>{fieldConfig.question}</FieldLabel>
+                            {fieldConfig.fieldType === 'textarea' ? (
+                              <>
+                                <textarea 
+                                  {...register(fieldKey, { 
+                                    required: fieldConfig.required,
+                                    maxLength: fieldConfig.maxLength
+                                  })} 
+                                  rows={fieldConfig.rows || 5} 
+                                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black ${
+                                    triedNext && errors[fieldKey] ? 'border-red-500' : ''
+                                  }`}
+                                  maxLength={fieldConfig.maxLength}
+                                  placeholder={fieldConfig.placeholder || ''}
+                                  onFocus={() => setFocusedField(fieldKey as string)} 
+                                  onBlur={() => setFocusedField(null)} 
+                                />
+                                {fieldConfig.maxLength && <CharLimit limit={fieldConfig.maxLength} field={fieldKey} />}
+                                <div className="min-h-[22px]">
+                                  {triedNext && errors[fieldKey] && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                      {errors[fieldKey]?.message || 'Это поле обязательно'}
+                                    </p>
+                                  )}
+                                </div>
+                              </>
+                            ) : (
+                              <>
+                                <input 
+                                  type={fieldConfig.fieldType || 'text'}
+                                  {...register(fieldKey, { 
+                                    required: fieldConfig.required,
+                                    maxLength: fieldConfig.maxLength
+                                  })} 
+                                  className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black ${
+                                    triedNext && errors[fieldKey] ? 'border-red-500' : ''
+                                  }`}
+                                  placeholder={fieldConfig.placeholder || ''}
+                                  onFocus={() => setFocusedField(fieldKey as string)} 
+                                  onBlur={() => setFocusedField(null)} 
+                                />
+                                {fieldConfig.maxLength && <CharLimit limit={fieldConfig.maxLength} field={fieldKey} />}
+                                <div className="min-h-[22px]">
+                                  {triedNext && errors[fieldKey] && (
+                                    <p className="mt-1 text-sm text-red-600">
+                                      {errors[fieldKey]?.message || 'Это поле обязательно'}
+                                    </p>
+                                  )}
+                                </div>
+                              </>
+                            )}
+                          </div>
+                        )
+                      })
+                    }
+                    // Дефолтные поля для завершения
+                    return (
+                      <>
+                        <div>
+                          <FieldLabel required={true}>Что ограничивает компанию от роста до «единорога»</FieldLabel>
+                          <textarea {...register('growthLimitations', { required: true, maxLength: 3000 })} rows={5} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={3000} placeholder="Опишите основные ограничения и препятствия для роста вашей компании" onFocus={() => setFocusedField('growthLimitations')} onBlur={() => setFocusedField(null)} />
+                          <CharLimit limit={3000} field="growthLimitations" />
+                          {triedNext && errors.growthLimitations && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
+                        </div>
+                        <div>
+                          <FieldLabel required={false}>Приложить файлы</FieldLabel>
+                          <div className="text-sm text-gray-600 mb-3">
+                            Приложите сопутствующие документы для оценки. Например, презентации по проекту, проведенные вами исследования рынка или конкурентов.
+                          </div>
+                          <div className="space-y-3">
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-1">Дополнительные документы</label>
+                              <input 
+                                type="file" 
+                                accept=".pdf,.ppt,.pptx,.doc,.docx,.xls,.xlsx"
+                                onChange={(e) => setDocs(e.target.files?.[0] || null)}
+                                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black"
+                              />
+                              {docs && (
+                                <p className="mt-2 text-sm text-gray-600">Выбран файл: {docs.name}</p>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )
+                  })()}
                 </motion.div>
               )}
               <div className="flex justify-between pt-6">
                 {step > 1 && (
                   <button type="button" onClick={() => goToStep(step - 1)} className="px-6 py-2 border border-gray-300 rounded-lg text-gray-600 hover:bg-gray-50 transition-colors">Назад</button>
                 )}
-                {step < 6 ? (
+                {step < getSectionTitles().length ? (
                   <button type="button" onClick={() => goToStep(step + 1)} className="ml-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Далее</button>
                 ) : (
                   <button type="submit" className="ml-auto px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">Отправить заявку</button>
