@@ -2,6 +2,7 @@ import "./globals.css";
 import Navigation from "@/components/Navigation";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { Metadata } from "next";
+import ConditionalNavigation from "@/components/ConditionalNavigation";
 
 export const metadata: Metadata = {
   icons: {
@@ -17,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="ru">
       <body>
-        <Navigation />
+        <ConditionalNavigation />
         {children}
         <SpeedInsights />
       </body>
