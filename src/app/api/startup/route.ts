@@ -34,6 +34,7 @@ export async function POST(request: Request) {
     
     console.log('Form data received:', Object.keys(data))
     console.log('Form data entries count:', Array.from(formData.entries()).length)
+    console.log('developmentPlans value:', data.developmentPlans ? `Present (${data.developmentPlans.length} chars)` : 'MISSING')
     
     // Извлекаем файлы - проверяем каждый отдельно
     const docs = formData.get('docs') as File | null

@@ -15,6 +15,8 @@ const questionToFieldKey: { [key: string]: string } = {
   'Уникальное торговое предложение': 'uniqueSellingPoint',
   'Наличие исследований': 'developmentPlans', // Старое название для обратной совместимости
   'Планы развития': 'developmentPlans',
+  'Планы развития проекта': 'developmentPlans',
+  'Планы развития и цели': 'developmentPlans',
   'Технологическая масштабируемость': 'techScalability',
   'Размер рынка': 'marketSize',
   'Текущие продажи': 'currentSales',
@@ -51,14 +53,28 @@ function generateFieldKey(question: string): string {
 
 // Функция для получения ключа поля из вопроса
 export function getFieldKeyFromQuestion(question: string): string {
+  // Нормализуем вопрос (убираем лишние пробелы, приводим к единому виду)
+  const normalizedQuestion = question.trim()
+  
   // Проверяем точное совпадение
-  if (questionToFieldKey[question]) {
-    return questionToFieldKey[question]
+  if (questionToFieldKey[normalizedQuestion]) {
+    return questionToFieldKey[normalizedQuestion]
+  }
+  
+  // Специальная обработка для "Планы развития" - проверяем различные варианты
+  const developmentPlansKeywords = ['планы развития', 'планы развития проекта', 'развитие', 'планы']
+  const questionLower = normalizedQuestion.toLowerCase()
+  for (const keyword of developmentPlansKeywords) {
+    if (questionLower.includes(keyword) && (questionLower.includes('план') || questionLower.includes('развит'))) {
+      return 'developmentPlans'
+    }
   }
   
   // Проверяем частичное совпадение
   for (const [keyQuestion, fieldKey] of Object.entries(questionToFieldKey)) {
-    if (question.includes(keyQuestion) || keyQuestion.includes(question)) {
+    const keyLower = keyQuestion.toLowerCase()
+    const questionLower = normalizedQuestion.toLowerCase()
+    if (questionLower.includes(keyLower) || keyLower.includes(questionLower)) {
       return fieldKey
     }
   }
