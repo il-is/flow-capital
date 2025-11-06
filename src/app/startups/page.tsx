@@ -1123,25 +1123,25 @@ export default function StartupPage() {
                       <>
                         <div>
                           <FieldLabel required={true}>Наличие зарегистрированных интеллектуальных прав</FieldLabel>
-                          <textarea {...register('intellectualProperty', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставите сведения о наличии зарегистрированных интеллектуальных прав" onFocus={() => setFocusedField('intellectualProperty')} onBlur={() => setFocusedField(null)} />
+                          <textarea {...register('intellectualProperty', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставьте сведения о наличии зарегистрированных интеллектуальных прав у компании/акционеров компании (Оформлены ли права на продукт/код т.д.)" onFocus={() => setFocusedField('intellectualProperty')} onBlur={() => setFocusedField(null)} />
                           <CharLimit limit={2000} field="intellectualProperty" />
                           {triedNext && errors.intellectualProperty && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                         </div>
                         <div>
                           <FieldLabel required={true}>Наличие текущих судебных споров</FieldLabel>
-                          <textarea {...register('legalDisputes', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставите сведения о наличии текущих судебных споров" onFocus={() => setFocusedField('legalDisputes')} onBlur={() => setFocusedField(null)} />
+                          <textarea {...register('legalDisputes', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставьте сведения о наличии текущих судебных споров" onFocus={() => setFocusedField('legalDisputes')} onBlur={() => setFocusedField(null)} />
                           <CharLimit limit={2000} field="legalDisputes" />
                           {triedNext && errors.legalDisputes && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                         </div>
                         <div>
                           <FieldLabel required={true}>Наличие договоров с инвесторами</FieldLabel>
-                          <textarea {...register('investorAgreements', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставите сведения о наличии договоров/соглашений с инвесторами" onFocus={() => setFocusedField('investorAgreements')} onBlur={() => setFocusedField(null)} />
+                          <textarea {...register('investorAgreements', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Предоставьте сведения о наличии договоров/соглашений с инвесторами, которые предоставляют права инвесторам на долю в компании (соглашения о конвертируемом займе/опционы, займы и т.д.)" onFocus={() => setFocusedField('investorAgreements')} onBlur={() => setFocusedField(null)} />
                           <CharLimit limit={2000} field="investorAgreements" />
                           {triedNext && errors.investorAgreements && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                         </div>
                         <div>
                           <FieldLabel required={true}>Формализованная структура владения</FieldLabel>
-                          <textarea {...register('ownershipStructure', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли формализованная структура владения и документы между основателями" onFocus={() => setFocusedField('ownershipStructure')} onBlur={() => setFocusedField(null)} />
+                          <textarea {...register('ownershipStructure', { required: true, maxLength: 2000 })} rows={3} className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-black" maxLength={2000} placeholder="Есть ли формализованная структура владения и документы между основателями (SHA/vesting)?" onFocus={() => setFocusedField('ownershipStructure')} onBlur={() => setFocusedField(null)} />
                           <CharLimit limit={2000} field="ownershipStructure" />
                           {triedNext && errors.ownershipStructure && <p className="mt-1 text-sm text-red-600">Это поле обязательно</p>}
                         </div>
